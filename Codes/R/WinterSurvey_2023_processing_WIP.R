@@ -9,7 +9,7 @@ sample_values # also read in!
 
 catch_summary<-list.files("./testData/EBS_Data/CATCH_SUMMARY")        # Need to edit this to pull from correct folder once done
 catch_summary
-specimen<-list.files("./testData/EBS_Data/SPECIMEN_TABLES")           # Need to edit this to pull from correct folder once done
+specimen<-list.files("./testData/EBS_Data/SPECIMEN_TABLE")           # Need to edit this to pull from correct folder once done
 
 
 # create blank df to hold sample and sample_value
@@ -19,6 +19,7 @@ sample_series<- sample_value_series <- data.frame()
 # necessary to ID data contained in SAMPLE_VALUES files 
 # need to set wd before running for loop or it won't read csvs......
 # Not ideal...want to figure out alternative once code is running properly
+# Add maturity status column for use with specimen table
 
 setwd("C:/Users/jon.richar/Work/GitRepos/WinterSurvey2023/testData/EBS_Data/SAMPLE")# Need to edit this to pull from correct folder once done
 
@@ -27,9 +28,12 @@ for(i in 1:length(sample)){ # start i loop (each file)
   #i <- 1:length(sample) #full data set
   path <- paste("./testData/EBS_Data/SAMPLE/", sample[i], sep="")                    # Need to edit this to pull from correct folder once done
   x<-read_csv(sample[i])
-  x %>% select(HAUL_ID, CATCH_SAMPLE_ID,SPECIES_CODE,SEX,SAMPLE_MODIFIER)->sample_series
-}
+  x %>% select(HAUL_ID, CATCH_SAMPLE_ID,SPECIES_CODE,SEX,SAMPLE_MODIFIER) %>%
+  mutate(MATURITY = if_else(SAMPLE_MODIFIER =='Immature', 0, if_else(SAMPLE_MODIFIER =='Mature', 1,if_else(SAMPLE_MODIFIER =='All Sizes', 3,0),0),0))->sample_series
+  }
 
+
+#sample_series
 ############ Now process the SAMPLE_VALUES files ################################
 ############ These contain the data needed to calculate sampling factors for RKC
 ############ and total caught for Chionoecetes spp.
@@ -56,7 +60,7 @@ for(i in 1:length(sample_values)){ # start i loop (each file)
 
 
 sample_value_series<-sample_values[-c(1)]
-
+sample_value_series
 #merge outputs
 dat<-as.data.frame(merge(sample_series, sample_value_series, by = c("CATCH_SAMPLE_ID")))    #need to combine output for correct appending to CATCH/SPECIMEN tables
 
@@ -64,7 +68,7 @@ dat%>%
 group_by(HAUL_ID,SPECIES_CODE) %>%
 summarize(NUMBER_CRAB=sum(TOTAL)) -> crab_caught                                                                         #works! YAY!Now just need to finish for-loops
 
-
+dat
 # ADD CATCH_SUMMARY and update
 # need to change wd or won't read csvs..
 # Again. not ideal...want to figure out alternative once code is running properly
@@ -82,9 +86,28 @@ for(i in 1:length(catch_summary)){ # start i loop (each file)
 
 
 catch_summary<-merge(crab_caught,summary,by=c("HAUL_ID", "SPECIES_CODE"))
-catch_summary
+#catch_summary
 
 # ADD SPECIMEN TABLE
 # USE HAUL_ID and HAUL from CATCH SUMMARY as key to link to correct HAUL in SPECIMEN TABLE
-#THEN USE SPECIES_CODE, SEX, and MATURITY STATUS (ALL FROM SAMPLE data to link to correct specimens)
+# THEN USE SPECIES_CODE, SEX, and MATURITY (ALL FROM SAMPLE data to link to correct specimens)
 catch_summary%>%select(HAUL_ID,HAUL) -> haul_key
+haul_key
+
+# need to change wd or won't read csvs..
+# Again. not ideal...want to figure out alternative once code is running properly
+
+setwd("C:/Users/jon.richar/Work/GitRepos/WinterSurvey2023/testData/EBS_Data/SPECIMEN_TABLE")# Need to edit this to pull from correct folder once done
+
+for(i in 1:length(specimen)){ # start i loop (each file)
+  i<-1 #first file for test purposes
+  #i <- 1:length(specimen) #full data set
+  path <- paste("./testData/EBS_Data/SPECIMEN_TABLE/", sample[i], sep="")                    # Need to edit this to pull from correct folder once done
+  x<-read_csv(specimen[i])
+  x %>% select(1:21,) ->x              
+  merge(x,haul_key, by =c("HAUL"))->x 
+  x %>% mutate(MATURITY = if_else(SEX == 2&CLUTCH_SIZE ==0, 0, if_else(SEX==2&CLUTCH_SIZE >=1, 1,if_else(SEX =='1', 3,0),0),0))->x
+  specimen_out<-merge(x, dat, by=c("HAUL_ID","SPECIES_CODE","SEX","MATURITY"))
+}
+
+specimen_out # With minimal editing data are now ready for Oracle
