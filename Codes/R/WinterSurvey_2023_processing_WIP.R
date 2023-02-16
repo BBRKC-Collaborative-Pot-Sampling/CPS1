@@ -68,7 +68,7 @@ dat%>%
 group_by(HAUL_ID,SPECIES_CODE) %>%
 summarize(NUMBER_CRAB=sum(TOTAL)) -> crab_caught                                                                         #works! YAY!Now just need to finish for-loops
 
-dat
+
 # ADD CATCH_SUMMARY and update
 # need to change wd or won't read csvs..
 # Again. not ideal...want to figure out alternative once code is running properly
@@ -86,11 +86,12 @@ for(i in 1:length(catch_summary)){ # start i loop (each file)
 
 
 catch_summary<-merge(crab_caught,summary,by=c("HAUL_ID", "SPECIES_CODE"))
-#catch_summary
+
 
 # ADD SPECIMEN TABLE
 # USE HAUL_ID and HAUL from CATCH SUMMARY as key to link to correct HAUL in SPECIMEN TABLE
 # THEN USE SPECIES_CODE, SEX, and MATURITY (ALL FROM SAMPLE data to link to correct specimens)
+
 catch_summary%>%select(HAUL_ID,HAUL) -> haul_key
 haul_key
 
@@ -111,3 +112,8 @@ for(i in 1:length(specimen)){ # start i loop (each file)
 }
 
 specimen_out # With minimal editing data are now ready for Oracle
+
+setwd("C:/Users/jon.richar/Work/GitRepos/WinterSurvey2023/DataForOracle")# Need to edit this to pull from correct folder once done
+
+write.csv(specimen_out, "Processed_Specimen_Data.csv")
+write.csv(catch_summary, "Processed_Catch_Summary.csv")
