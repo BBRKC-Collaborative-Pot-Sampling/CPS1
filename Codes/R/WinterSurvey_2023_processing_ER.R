@@ -17,7 +17,7 @@ library(colorRamps)
       catch <- list.files("./Data/FTP/Catch - FTP/") %>%
         purrr::map_df(~read.csv(paste0("./Data/FTP/Catch - FTP/", .x)))
       
-      # Process for oracle and save
+      # Process catch data for Oracle and save
       catch %>%
         dplyr::select(HAUL_ID, SPECIES_CODE, NUMBER_CRAB, VESSEL, CRUISE, HAUL) %>%
         write.csv("./DataforOracle/Processed_Catch_Summary.csv")
@@ -88,7 +88,7 @@ library(colorRamps)
                     LON_DD = (LON_DEG + LON_MIN/60)*-1) %>%
       dplyr::filter(is.na(VESSEL) == "FALSE") -> tagging
     
-  # Join raw_sample_values and raw_sample to get # tossed by sample modifier (e.g., "All sizes", "Immature") 
+  # Join raw_sample_values and raw_sample to get # tossed per haul, sex, and catch sample id
       samples <- right_join(raw_sample, raw_sample_values) %>%
         dplyr::select(HAUL_ID, CATCH_SAMPLE_ID, SPECIES_CODE, SPECIES_NAME, SEX, TOSSED)
     
@@ -148,7 +148,7 @@ library(colorRamps)
     
     # Calculate COUNT and CPUE per pot 
       mat_spec %>%
-        dplyr::mutate(CPUE = SAMPLING_FACTOR/SOAK_TIME) %>% #TOTAL CATCH
+        dplyr::mutate(CPUE = SAMPLING_FACTOR/SOAK_TIME) %>% 
         dplyr::group_by(VESSEL, POT, BUOY, LAT_DD, LON_DD, MAT_SEX) %>%
         dplyr::summarise(COUNT = sum(SAMPLING_FACTOR),
                          CPUE = sum(CPUE)) -> positive_pot_cpue
@@ -184,10 +184,7 @@ library(colorRamps)
   #set up plotting features
     map_layers <- akgfmaps::get_base_layers(select.region = "bs.south", set.crs="auto") # get map layers
     
-  #plot.boundary <- data.frame(y = c(55.5, 58.5), 
-                                #x = c(-165, -159.5)) %>%
-                                #akgfmaps::transform_data_frame_crs(out.crs = map.crs) # specify plot boundary
-    
+  
     plot.boundary <- data.frame(y = c(54.5, 58.5), 
                                 x = c(-164.8, -159)) %>%
                                 akgfmaps::transform_data_frame_crs(out.crs = map.crs) # specify plot boundary
