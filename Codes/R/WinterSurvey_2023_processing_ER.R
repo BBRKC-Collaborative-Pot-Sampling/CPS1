@@ -3,7 +3,7 @@
   # 2) To run error checks on processed specimen and catch summaries
   # 3) To calculate and map cpue by pot and mat/sex category for BBRKC
 
-  # !!Need to add filter for gear testing codes and bad haul codes once known!! 
+  # !!Need to add filter for gear testing codes and bad haul codes once known; also need to add station ID once known!! 
 
 # INSTALL PACKAGES ----------------------------------------------------------------------------------------------------------
   #devtools::install_github("sean-rohan-NOAA/akgfmaps", build_vignettes = TRUE)
