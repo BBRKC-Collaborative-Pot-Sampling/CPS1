@@ -3,15 +3,17 @@
   # 2) To run error checks on processed specimen and catch summaries
   # 3) To calculate and map cpue by pot and mat/sex category for BBRKC
 
+  # !!Need to add filter for gear testing codes and bad haul codes once known!! 
+
 # INSTALL PACKAGES ----------------------------------------------------------------------------------------------------------
   #devtools::install_github("sean-rohan-NOAA/akgfmaps", build_vignettes = TRUE)
   #devtools::install_github("afsc-gap-products/coldpool")
   
   #install.packages(c("tidyverse", "gsubfn", "terra", "rgdal", "colorRamps", "coldpool"))
 
-#install_version("tidyverse", version = "1.3.2")
-
-#install_version("dplyr", version = "1.1.0")
+  #install_version("tidyverse", version = "1.3.2")
+  
+  #install_version("dplyr", version = "1.1.0")
 
 # LOAD PACKAGES -------------------------------------------------------------------------------------------------------------
   library(tidyverse)
@@ -158,10 +160,132 @@
         dplyr::rename(HAUL = POT) %>%
         write.csv("./DataForOracle/Processed_Catch_Summary.csv")
 
+# CALCULATE AND MAP BBRKC CPUE ---------------------------------------------------------------------------------------------     
+  
+  # Make non-overlapping maturity/sex and legal/sublegal categories, bind together
+      specimen_table %>%
+        dplyr::mutate(MAT_SEX = dplyr::case_when((SPECIES_CODE == 69322 & SEX == 1 & LENGTH >= 120) ~ "Mature male",
+                                   (SPECIES_CODE == 69322 & SEX == 1 & LENGTH < 120) ~ "Immature male",
+                                   (SPECIES_CODE == 69322 & SEX == 2 & CLUTCH_SIZE >= 1) ~ "Mature female",
+                                   (SPECIES_CODE == 69322 & SEX == 2 & CLUTCH_SIZE == 0) ~ "Immature female")) -> maturity
+      
+      specimen_table%>%
+        dplyr::mutate(MAT_SEX = dplyr::case_when((SPECIES_CODE == 69322 & SEX == 1 & LENGTH >= 135) ~ "Legal male",
+                                   (SPECIES_CODE == 69322 & SEX == 1 & LENGTH < 135) ~ "Sublegal male")) %>%
+        dplyr::filter(is.na(MAT_SEX) == "FALSE") -> legal
+      
+      
+      rbind(maturity, legal) -> mat_spec #bind
+      
+      
+  # Calculate COUNT and CPUE per pot 
+      mat_spec %>%
+        dplyr::mutate(CPUE = SAMPLING_FACTOR/SOAK_TIME) %>% 
+        dplyr::group_by(VESSEL, POT, BUOY, LAT_DD, LON_DD, MAT_SEX) %>%
+        dplyr::reframe(COUNT = sum(SAMPLING_FACTOR),
+                         CPUE = sum(CPUE)) -> positive_pot_cpue
+      
+      
+  # Expand potlifts file to all mat-sex categories and potlifts, join to positive catch file to get zeros 
+      mat_sex_combos <- c("Mature male", "Immature male", "Mature female", "Immature female", "Legal male", "Sublegal male")
+      
+      positive_pot_cpue %>%
+        dplyr::right_join(expand_grid(MAT_SEX = mat_sex_combos,
+                               potlifts)) %>%
+        replace_na(list(COUNT = 0, CPUE = 0)) %>%
+        dplyr::select(VESSEL, POT, BUOY, LAT_DD, LON_DD, DATE_SET, TIME_SET, DATE_HAUL, TIME_HAUL, SOAK_TIME,
+                      MAT_SEX, COUNT, CPUE)-> pot_cpue
+      
+  # Save csv
+      write.csv(pot_cpue, "./Output/W2023_potcpue.csv")
+      
+  # Transform catch and tagging data to correct crs
+      pot_cpue %>%
+        sf::st_as_sf(coords = c(x = "LON_DD", y = "LAT_DD"), crs = sf::st_crs(4326)) %>%
+        sf::st_transform(crs = map.crs)-> pot_cpue_mapdat 
+      
+      tagging %>%
+        sf::st_as_sf(coords = c(x = "LON_DD", y = "LAT_DD"), crs = sf::st_crs(4326)) %>%
+        sf::st_transform(crs = map.crs) %>%
+        dplyr::mutate(VESSEL = ifelse(VESSEL == "162", "Summer Bay", "Silver Spray"),
+                      MAT_SEX = "Mature male",
+                      shp = case_when((VESSEL == "Silver Spray" & N > 1) ~ 15,
+                                      (VESSEL == "Silver Spray" & N == 1) ~ 0,
+                                      (VESSEL == "Summer Bay" & N > 1) ~ 25, 
+                                      (VESSEL == "Summer Bay" & N == 1) ~ 6)) -> tagging_mapdat 
+      
+      
+  #set up plotting features
+      map_layers <- akgfmaps::get_base_layers(select.region = "bs.south", set.crs="auto") # get map layers
+      
+      
+      plot.boundary.untrans <- data.frame(y = c(54.5, 58.5), 
+                                          x = c(-164.8, -159)) 
+      
+      plot.boundary <- plot.boundary.untrans %>%
+                          akgfmaps::transform_data_frame_crs(out.crs = map.crs) # specify plot boundary
+      
+      
+      breaks.x <- map_layers$lon.breaks[(map_layers$lon.breaks >= plot.boundary.untrans$x[1] &  # set lon breaks
+                                           map_layers$lon.breaks < plot.boundary.untrans$x[2]) == TRUE]
+      
+      breaks.y <- map_layers$lat.breaks[(map_layers$lat.breaks > plot.boundary.untrans$y[1] & # set lat breaks
+                                           map_layers$lat.breaks < plot.boundary.untrans$y[2]) == TRUE]
+      
+      max.date <- max(pot_cpue_mapdat$DATE_HAUL) # label for most recent pot haul date
+      
+      pal <- viridis::mako(10) # set palette
+      
+  # Plot
+      mat_sex_combos %>%
+        purrr::map(~ggplot() +
+                    #geom_sf(data = map_layers$bathymetry, color=alpha("grey70")) +
+                    geom_sf(data = st_as_sf(BB_strata), fill = NA, color = "black", linewidth = 1) +
+                    geom_sf(data = st_as_sf(RKCSA_sub), fill = NA, color = "red", alpha= 0.5, linewidth = 1) +
+                    geom_sf(data = st_as_sf(RKCSA), fill = NA, color = "red", alpha =0.5, linewidth = 1) +
+                    geom_sf(data = map_layers$akland, fill = "grey80") +
+                    geom_sf(data = filter(pot_cpue_mapdat, MAT_SEX == .x),
+                             mapping = aes(size=COUNT, fill = COUNT), shape = 21, colour = "black", stat="identity", position="identity")+
+                    geom_sf(data = filter(tagging_mapdat, MAT_SEX == .x),
+                             mapping = aes(shape = as.factor(shp)), size= 2.5, stat="identity", position="identity")+
+                    scale_shape_manual(values = c(0, 2, 15, 17), 
+                                       labels = c("Silver Spray (n=1)", "Summer Bay (n=1)", "Silver Spray (n>1)", "Summer Bay (n>1)"))+
+                    scale_size_continuous(range = c(2, 10), limits = c(0, max(filter(pot_cpue_mapdat, MAT_SEX == .x)$COUNT)))+ 
+                    scale_fill_gradientn(limits = c(0, max(filter(pot_cpue_mapdat, MAT_SEX == .x)$COUNT)), 
+                                          colors = c("gray", rev(pal[5:length(pal)])))+
+                    scale_x_continuous(breaks = breaks.x, labels = paste0(breaks.x, "°W")) + 
+                    scale_y_continuous(breaks = breaks.y, labels = paste0(breaks.y, "°N")) +
+                    ggtitle(paste("BBRKC", .x)) +
+                    guides(size = guide_legend(title.position = "top"), 
+                            fill = guide_legend(), shape = guide_legend(title = "TAG RELEASE", title.position = "top", nrow =2))+
+                    coord_sf(xlim = plot.boundary$x,
+                              ylim = plot.boundary$y) +
+                    geom_text(data = akgfmaps::transform_data_frame_crs(
+                                data.frame(label = paste("Last haul date:",max.date),x = c(-160.5), y = c(58.3)), 
+                                out.crs = map.crs), 
+                                mapping = aes(x = x, y = y, label = label, fontface = "bold"), 
+                                size = 3.5, color = c("#40498EFF"))+
+                    theme_bw() +
+                    theme(axis.title = element_blank(),
+                           axis.text = element_text(size = 10),
+                           legend.text = element_text(size = 10),
+                           legend.title = element_text(size = 10),
+                           legend.position = "bottom",
+                           legend.direction = "horizontal",
+                           plot.title = element_text(face = "bold"))) -> BBRKC.maps
+      
+  # Save plots
+      ggsave(plot = BBRKC.maps[[1]], "./Figures/BBRKC_matmale.png", height=7, width=10, units="in")
+      ggsave(plot = BBRKC.maps[[2]], "./Figures/BBRKC_immale.png", height=7, width=10, units="in")
+      ggsave(plot = BBRKC.maps[[3]], "./Figures/BBRKC_matfem.png", height=7, width=10, units="in")
+      ggsave(plot = BBRKC.maps[[4]], "./Figures/BBRKC_imfem.png", height=7, width=10, units="in")
+      ggsave(plot = BBRKC.maps[[5]], "./Figures/BBRKC_legalmale.png", height=7, width=10, units="in")
+      ggsave(plot = BBRKC.maps[[6]], "./Figures/BBRKC_sublegalmale.png", height=7, width=10, units="in")
+      
 # ERROR CHECKING -----------------------------------------------------------------------------------------------------
       
   # Write function
-    error_chk <- function(specimen_table, catch_summary, potlifts){
+    error_chk <- function(specimen_table, catch_summary, potlifts, pot_cpue){
         
         print("CHECKING VESSEL AND CRUISE...")
         
@@ -362,6 +486,18 @@
         
         
         print("CHECKING HAUL, STATION, AND BUOY IDs...")
+        pot_cpue %>%
+          dplyr::select(VESSEL, POT, BUOY, LAT_DD, LON_DD) %>%
+          distinct() %>%
+          as.data.frame()-> xx
+        
+        potlifts %>%
+          dplyr::select(VESSEL, POT, BUOY, LAT_DD, LON_DD) %>%
+          distinct() -> yy
+        
+        if(TRUE %in% is.na(suppressMessages(right_join(xx, yy, keep = TRUE))) == TRUE){
+          print("ERROR: pot, station, and/or buoy IDs do not match between potlifts table and pot cpue table")
+        }
         
         print("COMPARING SPECIMEN TABLE WITH CATCH SUMMARY...")
         specimen_table %>%
@@ -373,7 +509,7 @@
           dplyr::select(CRUISE, VESSEL, POT, SPECIES_CODE, NUMBER_CRAB, N_ENTRIES) -> catch_sum
         
         # 22) Does the number of crab and number of entries match between the specimen table and catch summary?
-        if(all.equal(spec_sum, catch_sum) == FALSE){
+        if(TRUE %in% is.na(suppressMessages(right_join(spec_sum, catch_sum))) == TRUE){
           print("ERROR: number of crab and number of entries do not 
                  match between summarized specimen table and catch summary")
         } 
@@ -386,13 +522,13 @@
           sf::st_transform(crs = map.crs)-> potlifts_mapdat 
         
         #set up plotting features
-        map_layers <- akgfmaps::get_base_layers(select.region = "bs.south", set.crs="auto") # get map layers
+        map_layers <- suppressWarnings(akgfmaps::get_base_layers(select.region = "bs.south", set.crs="auto")) # get map layers
         
         plot.boundary.untrans <- data.frame(y = c(54, 59.5), 
-                                    x = c(-168, -158)) 
+                                            x = c(-168, -158)) 
         
         plot.boundary <- plot.boundary.untrans %>%
-                            akgfmaps::transform_data_frame_crs(out.crs = map.crs) # specify plot boundary
+          akgfmaps::transform_data_frame_crs(out.crs = map.crs) # specify plot boundary
         
         breaks.x <- map_layers$lon.breaks[(map_layers$lon.breaks >= plot.boundary.untrans$x[1] &  # set lon breaks
                                              map_layers$lon.breaks < plot.boundary.untrans$x[2]) == TRUE]
@@ -418,131 +554,8 @@
         print(coords)
         
         
-      }    
+    }    
       
   # Run function
-    error_chk(specimen_table, catch_summary, potlifts) 
-      
-# CALCULATE AND MAP BBRKC CPUE ---------------------------------------------------------------------------------------------     
-  
-  # Make non-overlapping maturity/sex and legal/sublegal categories, bind together
-      specimen_table %>%
-        dplyr::mutate(MAT_SEX = dplyr::case_when((SPECIES_CODE == 69322 & SEX == 1 & LENGTH >= 120) ~ "Mature male",
-                                   (SPECIES_CODE == 69322 & SEX == 1 & LENGTH < 120) ~ "Immature male",
-                                   (SPECIES_CODE == 69322 & SEX == 2 & CLUTCH_SIZE >= 1) ~ "Mature female",
-                                   (SPECIES_CODE == 69322 & SEX == 2 & CLUTCH_SIZE == 0) ~ "Immature female")) -> maturity
-      
-      specimen_table%>%
-        dplyr::mutate(MAT_SEX = dplyr::case_when((SPECIES_CODE == 69322 & SEX == 1 & LENGTH >= 135) ~ "Legal male",
-                                   (SPECIES_CODE == 69322 & SEX == 1 & LENGTH < 135) ~ "Sublegal male")) %>%
-        dplyr::filter(is.na(MAT_SEX) == "FALSE") -> legal
-      
-      
-      rbind(maturity, legal) -> mat_spec #bind
-      
-      
-  # Calculate COUNT and CPUE per pot 
-      mat_spec %>%
-        dplyr::mutate(CPUE = SAMPLING_FACTOR/SOAK_TIME) %>% 
-        dplyr::group_by(VESSEL, POT, BUOY, LAT_DD, LON_DD, MAT_SEX) %>%
-        dplyr::reframe(COUNT = sum(SAMPLING_FACTOR),
-                         CPUE = sum(CPUE)) -> positive_pot_cpue
-      
-      
-  # Expand potlifts file to all mat-sex categories and potlifts, join to positive catch file to get zeros 
-      mat_sex_combos <- c("Mature male", "Immature male", "Mature female", "Immature female", "Legal male", "Sublegal male")
-      
-      positive_pot_cpue %>%
-        dplyr::right_join(expand_grid(MAT_SEX = mat_sex_combos,
-                               potlifts)) %>%
-        replace_na(list(COUNT = 0, CPUE = 0)) %>%
-        dplyr::select(VESSEL, POT, BUOY, LAT_DD, LON_DD, DATE_SET, TIME_SET, DATE_HAUL, TIME_HAUL, SOAK_TIME,
-                      MAT_SEX, COUNT, CPUE)-> pot_cpue
-      
-  # Save csv
-      write.csv(pot_cpue, "./Output/W2023_potcpue.csv")
-      
-  # Transform catch and tagging data to correct crs
-      pot_cpue %>%
-        sf::st_as_sf(coords = c(x = "LON_DD", y = "LAT_DD"), crs = sf::st_crs(4326)) %>%
-        sf::st_transform(crs = map.crs)-> pot_cpue_mapdat 
-      
-      tagging %>%
-        sf::st_as_sf(coords = c(x = "LON_DD", y = "LAT_DD"), crs = sf::st_crs(4326)) %>%
-        sf::st_transform(crs = map.crs) %>%
-        dplyr::mutate(VESSEL = ifelse(VESSEL == "162", "Summer Bay", "Silver Spray"),
-                      MAT_SEX = "Mature male",
-                      shp = case_when((VESSEL == "Silver Spray" & N > 1) ~ 15,
-                                      (VESSEL == "Silver Spray" & N == 1) ~ 0,
-                                      (VESSEL == "Summer Bay" & N > 1) ~ 25, 
-                                      (VESSEL == "Summer Bay" & N == 1) ~ 6)) -> tagging_mapdat 
-      
-      
-  #set up plotting features
-      map_layers <- akgfmaps::get_base_layers(select.region = "bs.south", set.crs="auto") # get map layers
-      
-      
-      plot.boundary.untrans <- data.frame(y = c(54.5, 58.5), 
-                                          x = c(-164.8, -159)) 
-      
-      plot.boundary <- plot.boundary.untrans %>%
-                          akgfmaps::transform_data_frame_crs(out.crs = map.crs) # specify plot boundary
-      
-      
-      breaks.x <- map_layers$lon.breaks[(map_layers$lon.breaks >= plot.boundary.untrans$x[1] &  # set lon breaks
-                                           map_layers$lon.breaks < plot.boundary.untrans$x[2]) == TRUE]
-      
-      breaks.y <- map_layers$lat.breaks[(map_layers$lat.breaks > plot.boundary.untrans$y[1] & # set lat breaks
-                                           map_layers$lat.breaks < plot.boundary.untrans$y[2]) == TRUE]
-      
-      max.date <- max(pot_cpue_mapdat$DATE_HAUL) # label for most recent pot haul date
-      
-      pal <- viridis::mako(10) # set palette
-      
-  # Plot
-      mat_sex_combos %>%
-        purrr::map(~ggplot() +
-                    #geom_sf(data = map_layers$bathymetry, color=alpha("grey70")) +
-                    geom_sf(data = st_as_sf(BB_strata), fill = NA, color = "black", linewidth = 1) +
-                    geom_sf(data = st_as_sf(RKCSA_sub), fill = NA, color = "red", alpha= 0.5, linewidth = 1) +
-                    geom_sf(data = st_as_sf(RKCSA), fill = NA, color = "red", alpha =0.5, linewidth = 1) +
-                    geom_sf(data = map_layers$akland, fill = "grey80") +
-                    geom_sf(data = filter(pot_cpue_mapdat, MAT_SEX == .x),
-                             mapping = aes(size=COUNT, fill = COUNT), shape = 21, colour = "black", stat="identity", position="identity")+
-                    geom_sf(data = filter(tagging_mapdat, MAT_SEX == .x),
-                             mapping = aes(shape = as.factor(shp)), size= 2.5, stat="identity", position="identity")+
-                    scale_shape_manual(values = c(0, 2, 15, 17), 
-                                       labels = c("Silver Spray (n=1)", "Summer Bay (n=1)", "Silver Spray (n>1)", "Summer Bay (n>1)"))+
-                    scale_size_continuous(range = c(2, 10), limits = c(0, max(filter(pot_cpue_mapdat, MAT_SEX == .x)$COUNT)))+ 
-                    scale_fill_gradientn(limits = c(0, max(filter(pot_cpue_mapdat, MAT_SEX == .x)$COUNT)), 
-                                          colors = c("gray", rev(pal[5:length(pal)])))+
-                    scale_x_continuous(breaks = breaks.x, labels = paste0(breaks.x, "°W")) + 
-                    scale_y_continuous(breaks = breaks.y, labels = paste0(breaks.y, "°N")) +
-                    ggtitle(paste("BBRKC", .x)) +
-                    guides(size = guide_legend(title.position = "top"), 
-                            fill = guide_legend(), shape = guide_legend(title = "TAG RELEASE", title.position = "top", nrow =2))+
-                    coord_sf(xlim = plot.boundary$x,
-                              ylim = plot.boundary$y) +
-                    geom_text(data = akgfmaps::transform_data_frame_crs(
-                                data.frame(label = paste("Last haul date:",max.date),x = c(-160.5), y = c(58.3)), 
-                                out.crs = map.crs), 
-                                mapping = aes(x = x, y = y, label = label, fontface = "bold"), 
-                                size = 3.5, color = c("#40498EFF"))+
-                    theme_bw() +
-                    theme(axis.title = element_blank(),
-                           axis.text = element_text(size = 10),
-                           legend.text = element_text(size = 10),
-                           legend.title = element_text(size = 10),
-                           legend.position = "bottom",
-                           legend.direction = "horizontal",
-                           plot.title = element_text(face = "bold"))) -> BBRKC.maps
-      
-  # Save plots
-      ggsave(plot = BBRKC.maps[[1]], "./Figures/BBRKC_matmale.png", height=7, width=10, units="in")
-      ggsave(plot = BBRKC.maps[[2]], "./Figures/BBRKC_immale.png", height=7, width=10, units="in")
-      ggsave(plot = BBRKC.maps[[3]], "./Figures/BBRKC_matfem.png", height=7, width=10, units="in")
-      ggsave(plot = BBRKC.maps[[4]], "./Figures/BBRKC_imfem.png", height=7, width=10, units="in")
-      ggsave(plot = BBRKC.maps[[5]], "./Figures/BBRKC_legalmale.png", height=7, width=10, units="in")
-      ggsave(plot = BBRKC.maps[[6]], "./Figures/BBRKC_sublegalmale.png", height=7, width=10, units="in")
-      
+    error_chk(specimen_table, catch_summary, potlifts, pot_cpue) 
       
