@@ -9,6 +9,10 @@
   
   #install.packages(c("tidyverse", "gsubfn", "terra", "rgdal", "colorRamps", "coldpool"))
 
+#install_version("tidyverse", version = "1.3.2")
+
+#install_version("dplyr", version = "1.1.0")
+
 # LOAD PACKAGES -------------------------------------------------------------------------------------------------------------
   library(tidyverse)
   library(akgfmaps)
@@ -41,7 +45,7 @@
         purrr::map_df(~read.csv(paste0("./Data/FTP/RawData - FTP/", .x))) %>%
         mutate(TOSSED = ifelse(is.na(COUNT) == FALSE, COUNT,0)) %>%
         group_by(HAUL_ID, CATCH_SAMPLE_ID) %>%
-        dplyr::summarise(TOSSED = sum(TOSSED)) 
+        dplyr::reframe(TOSSED = sum(TOSSED)) 
       
       raw_specimen <- list.files("./Data/FTP/RawData - FTP/", pattern = "_SPECIMEN_0") %>% 
         purrr::map_df(~read.csv(paste0("./Data/FTP/RawData - FTP/", .x))) %>%
@@ -384,9 +388,11 @@
         #set up plotting features
         map_layers <- akgfmaps::get_base_layers(select.region = "bs.south", set.crs="auto") # get map layers
         
-        plot.boundary <- data.frame(y = c(54, 59.5), 
-                                    x = c(-168, -158)) %>%
-          akgfmaps::transform_data_frame_crs(out.crs = map.crs) # specify plot boundary
+        plot.boundary.untrans <- data.frame(y = c(54, 59.5), 
+                                    x = c(-168, -158)) 
+        
+        plot.boundary <- plot.boundary.untrans %>%
+                            akgfmaps::transform_data_frame_crs(out.crs = map.crs) # specify plot boundary
         
         breaks.x <- map_layers$lon.breaks[(map_layers$lon.breaks >= plot.boundary.untrans$x[1] &  # set lon breaks
                                              map_layers$lon.breaks < plot.boundary.untrans$x[2]) == TRUE]
@@ -476,9 +482,11 @@
       map_layers <- akgfmaps::get_base_layers(select.region = "bs.south", set.crs="auto") # get map layers
       
       
-      plot.boundary <- data.frame(y = c(54.5, 58.5), 
-                                  x = c(-164.8, -159)) %>%
-        akgfmaps::transform_data_frame_crs(out.crs = map.crs) # specify plot boundary
+      plot.boundary.untrans <- data.frame(y = c(54.5, 58.5), 
+                                          x = c(-164.8, -159)) 
+      
+      plot.boundary <- plot.boundary.untrans %>%
+                          akgfmaps::transform_data_frame_crs(out.crs = map.crs) # specify plot boundary
       
       
       breaks.x <- map_layers$lon.breaks[(map_layers$lon.breaks >= plot.boundary.untrans$x[1] &  # set lon breaks
