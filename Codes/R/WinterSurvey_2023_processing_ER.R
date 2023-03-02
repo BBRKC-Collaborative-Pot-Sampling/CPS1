@@ -30,12 +30,6 @@
       catch <- list.files("./Data/FTP/Catch - FTP/") %>%
         purrr::map_df(~read.csv(paste0("./Data/FTP/Catch - FTP/", .x)))
       
-      # Process catch data for Oracle and save
-      catch %>%
-        dplyr::select(HAUL_ID, SPECIES_CODE, NUMBER_CRAB, VESSEL, CRUISE, HAUL) %>%
-        write.csv("./DataforOracle/Processed_Catch_Summary.csv")
-      
-      
       specimen <- list.files("./Data/FTP/Specimen - FTP/") %>%
         purrr::map_df(~read.csv(paste0("./Data/FTP/Specimen - FTP/", .x)))
       
