@@ -3,8 +3,6 @@
   # 2) To run error checks on processed specimen and catch summaries
   # 3) To calculate and map cpue by pot and mat/sex category for BBRKC
 
-  # !!Need to add filter for gear testing codes and bad haul codes once known; also need to add station ID once known!! 
-
 # INSTALL PACKAGES ----------------------------------------------------------------------------------------------------------
   #devtools::install_github("sean-rohan-NOAA/akgfmaps", build_vignettes = TRUE)
   #devtools::install_github("afsc-gap-products/coldpool")
@@ -79,7 +77,7 @@
       
 # PROCESS DATA ----------------------------------------------------------------------------------------------------------------
     
-  # Calculate soak time and lat/lon in degrees decimal for all potlifts
+  # Calculate soak time and lat/lon in degrees decimal for all potlifts, omit bad or gear testing potlifts based on gear code
     potlifts %>%
       dplyr::mutate(DATETIME_SET = as.POSIXct(paste(DATE_SET, TIME_SET), format = "%m/%d/%Y %H:%M"),
                     DATETIME_HAUL = as.POSIXct(paste(DATE_HAUL, TIME_HAUL), format = "%m/%d/%Y %H:%M"),
@@ -87,7 +85,7 @@
                     LAT_DD = LAT_DEG + LAT_MIN/60,
                     LON_DD = (LON_DEG + LON_MIN/60)*-1) %>%
       dplyr::select(!c(DATETIME_SET, DATETIME_HAUL)) %>%
-      dplyr::filter(is.na(VESSEL) == "FALSE") -> potlifts
+      dplyr::filter(is.na(VESSEL) == "FALSE" & is.na(GEAR_CODE) == TRUE) -> potlifts
     
   # Calculate lat/lon in degrees decimal for tagging release points and # of tags released per station
     tagging %>%
@@ -128,9 +126,10 @@
                           multiple = "all") %>%
         dplyr::left_join(specimen) %>%
         distinct() %>%
-        dplyr::rename(POT = HAUL) %>% 
-        dplyr::right_join(potlifts, ., by = c("VESSEL", "POT"), multiple = "all") %>%
-        dplyr::select(CRUISE, VESSEL, POT, BUOY, LAT_DD, LON_DD, DATE_HAUL, TIME_HAUL, SOAK_TIME, DEPTH_F,
+        dplyr::rename(POT_ID = HAUL) %>% 
+        dplyr::right_join(potlifts, ., by = c("VESSEL", "POT_ID"), multiple = "all") %>%
+        dplyr::filter(c(is.na(LAT_DD) & is.na(LON_DD) & is.na(SPN)) == FALSE) %>% # bad/gear testing hauls will have NA
+        dplyr::select(CRUISE, VESSEL, SPN, POT_ID, BUOY, LAT_DD, LON_DD, DATE_HAUL, TIME_HAUL, SOAK_TIME, DEPTH_F,
                       SPECIES_CODE, SEX, LENGTH, WIDTH, SAMPLING_FACTOR, SHELL_CONDITION, EGG_COLOR, EGG_CONDITION, 
                       CLUTCH_SIZE, WEIGHT, DISEASE_CODE, DISEASE_DORSAL, DISEASE_VENTRAL, DISEASE_LEGS,  
                       CHELA_HEIGHT, MERUS_LENGTH, COMMENTS) -> specimen_table
@@ -138,20 +137,21 @@
   # Process specimen table for Oracle, save
       specimen_table %>%
         dplyr::select(!c(LAT_DD, LON_DD, DATE_HAUL, TIME_HAUL, SOAK_TIME, DEPTH_F)) %>%
-        dplyr::rename(HAUL = POT, STATION = BUOY) %>%
+        dplyr::rename(HAUL = POT_ID, STATION = BUOY) %>% # MAY CHANGE BUOY TO ACTUAL STATION
         write.csv("./DataForOracle/Processed_Specimen_Data.csv")
       
   # Update catch summary table with new crab #s from sampling factor
       specimen_table %>%
-        dplyr::group_by(CRUISE, VESSEL, POT, SPECIES_CODE) %>%
+        dplyr::group_by(CRUISE, VESSEL, SPN, POT_ID, SPECIES_CODE) %>%
         dplyr::reframe(NUMBER_CRAB = sum(SAMPLING_FACTOR)) %>%
-        dplyr::right_join(catch %>% dplyr::rename(POT = HAUL, N_ENTRIES = NUMBER_CRAB)) %>%
-        dplyr::select(HAUL_ID, SPECIES_CODE, CRUISE, VESSEL, POT, NUMBER_CRAB, N_ENTRIES) -> catch_summary
+        dplyr::right_join(catch %>% dplyr::rename(POT_ID = HAUL, N_ENTRIES = NUMBER_CRAB)) %>%
+        dplyr::select(CRUISE, VESSEL, SPN, POT_ID, SPECIES_CODE, NUMBER_CRAB, N_ENTRIES) %>%
+        na.omit() -> catch_summary # bad/gear testing potlifts will have NA for SPN and # crab
       
   # Process catch_summary table for Oracle, save
       catch_summary %>%
         dplyr::select(!N_ENTRIES) %>%
-        dplyr::rename(HAUL = POT) %>%
+        dplyr::rename(HAUL = POT_ID) %>%
         write.csv("./DataForOracle/Processed_Catch_Summary.csv")
 
 # CALCULATE AND MAP BBRKC CPUE ---------------------------------------------------------------------------------------------     
@@ -175,7 +175,7 @@
   # Calculate COUNT and CPUE per pot 
       mat_spec %>%
         dplyr::mutate(CPUE = SAMPLING_FACTOR/SOAK_TIME) %>% 
-        dplyr::group_by(VESSEL, POT, BUOY, LAT_DD, LON_DD, MAT_SEX) %>%
+        dplyr::group_by(VESSEL, SPN, POT_ID, BUOY, LAT_DD, LON_DD, MAT_SEX) %>%
         dplyr::reframe(COUNT = sum(SAMPLING_FACTOR),
                          CPUE = sum(CPUE)) -> positive_pot_cpue
       
@@ -187,7 +187,7 @@
         dplyr::right_join(expand_grid(MAT_SEX = mat_sex_combos,
                                potlifts)) %>%
         replace_na(list(COUNT = 0, CPUE = 0)) %>%
-        dplyr::select(VESSEL, POT, BUOY, LAT_DD, LON_DD, DATE_SET, TIME_SET, DATE_HAUL, TIME_HAUL, SOAK_TIME,
+        dplyr::select(VESSEL, SPN, POT_ID, BUOY, LAT_DD, LON_DD, DATE_SET, TIME_SET, DATE_HAUL, TIME_HAUL, SOAK_TIME,
                       MAT_SEX, COUNT, CPUE)-> pot_cpue
       
   # Save csv
@@ -481,12 +481,12 @@
         
         print("CHECKING HAUL, STATION, AND BUOY IDs...")
         pot_cpue %>%
-          dplyr::select(VESSEL, POT, BUOY, LAT_DD, LON_DD) %>%
+          dplyr::select(VESSEL, SPN, POT_ID, BUOY, LAT_DD, LON_DD) %>%
           distinct() %>%
           as.data.frame()-> xx
         
         potlifts %>%
-          dplyr::select(VESSEL, POT, BUOY, LAT_DD, LON_DD) %>%
+          dplyr::select(VESSEL, SPN, POT_ID, BUOY, LAT_DD, LON_DD) %>%
           distinct() -> yy
         
         if(TRUE %in% is.na(suppressMessages(right_join(xx, yy, keep = TRUE))) == TRUE){
@@ -495,12 +495,12 @@
         
         print("COMPARING SPECIMEN TABLE WITH CATCH SUMMARY...")
         specimen_table %>%
-          dplyr::group_by(CRUISE, VESSEL, POT, SPECIES_CODE) %>%
+          dplyr::group_by(CRUISE, VESSEL, POT_ID, SPECIES_CODE) %>%
           dplyr::reframe(NUMBER_CRAB = sum(SAMPLING_FACTOR),
                          N_ENTRIES = n()) -> spec_sum
         
         catch_summary %>%
-          dplyr::select(CRUISE, VESSEL, POT, SPECIES_CODE, NUMBER_CRAB, N_ENTRIES) -> catch_sum
+          dplyr::select(CRUISE, VESSEL, POT_ID, SPECIES_CODE, NUMBER_CRAB, N_ENTRIES) -> catch_sum
         
         # 22) Does the number of crab and number of entries match between the specimen table and catch summary?
         if(TRUE %in% is.na(suppressMessages(right_join(spec_sum, catch_sum))) == TRUE){
