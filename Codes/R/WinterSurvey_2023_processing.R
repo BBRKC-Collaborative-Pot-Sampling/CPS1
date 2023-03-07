@@ -4,7 +4,7 @@
   # 3) To calculate and map cpue by pot and mat/sex category for BBRKC
 
 # INSTALL PACKAGES ----------------------------------------------------------------------------------------------------------
-  #install.packages(c("tidyverse", "gsubfn", "terra", "rgdal", "colorRamps", "sf"))
+  #install.packages(c("tidyverse", "gsubfn", "terra", "rgdal", "colorRamps", "sf", "viridis"))
 
 
 # LOAD PACKAGES -------------------------------------------------------------------------------------------------------------
@@ -14,6 +14,7 @@
   library(rgdal)
   library(colorRamps)
   library(sf)
+  library(viridis)
 
 # LOAD DATA -----------------------------------------------------------------------------------------------------------------
   
