@@ -4,23 +4,16 @@
   # 3) To calculate and map cpue by pot and mat/sex category for BBRKC
 
 # INSTALL PACKAGES ----------------------------------------------------------------------------------------------------------
-  #devtools::install_github("sean-rohan-NOAA/akgfmaps", build_vignettes = TRUE)
-  #devtools::install_github("afsc-gap-products/coldpool")
-  
-  #install.packages(c("tidyverse", "gsubfn", "terra", "rgdal", "colorRamps", "coldpool"))
+  #install.packages(c("tidyverse", "gsubfn", "terra", "rgdal", "colorRamps", "sf"))
 
-  #install_version("tidyverse", version = "1.3.2")
-  
-  #install_version("dplyr", version = "1.1.0")
 
 # LOAD PACKAGES -------------------------------------------------------------------------------------------------------------
   library(tidyverse)
-  library(akgfmaps)
   library(gsubfn)
   library(terra)
   library(rgdal)
   library(colorRamps)
-  library(coldpool)
+  library(sf)
 
 # LOAD DATA -----------------------------------------------------------------------------------------------------------------
   
@@ -57,7 +50,7 @@
     
   # Read in spatial layers for mapping purposes 
       # Set crs
-      map.crs <- coldpool:::ebs_proj_crs 
+      map.crs <- "EPSG:3338"
       
       # Read in Bristol Bay management shapefile
       survey_gdb<- "./Data/SAP_layers.gdb"
@@ -210,14 +203,17 @@
       
       
   #set up plotting features
-      map_layers <- akgfmaps::get_base_layers(select.region = "bs.south", set.crs="auto") # get map layers
-      
+      map_layers <- readRDS("./Data/akgfmaps_layers.rds")
       
       plot.boundary.untrans <- data.frame(y = c(54.5, 58.5), 
-                                          x = c(-164.8, -159)) 
+                                          x = c(-164.8, -159)) # plot boundary unprojected
       
       plot.boundary <- plot.boundary.untrans %>%
-                          akgfmaps::transform_data_frame_crs(out.crs = map.crs) # specify plot boundary
+                          sf::st_as_sf(coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                          sf::st_transform(crs = map.crs) %>%
+                          sf::st_coordinates() %>%
+                          as.data.frame() %>%
+                          dplyr::rename(x = X, y = Y) # plot boundary projected
       
       
       breaks.x <- map_layers$lon.breaks[(map_layers$lon.breaks >= plot.boundary.untrans$x[1] &  # set lon breaks
@@ -254,10 +250,10 @@
                             fill = guide_legend(), shape = guide_legend(title = "TAG RELEASE", title.position = "top", nrow =2))+
                     coord_sf(xlim = plot.boundary$x,
                               ylim = plot.boundary$y) +
-                    geom_text(data = akgfmaps::transform_data_frame_crs(
-                                data.frame(label = paste("Last haul date:",max.date),x = c(-160.5), y = c(58.3)), 
-                                out.crs = map.crs), 
-                                mapping = aes(x = x, y = y, label = label, fontface = "bold"), 
+                    geom_sf_text(sf::st_as_sf(data.frame(label = paste("Last haul date:",max.date),x = c(-160.5), y = c(58.3)),
+                                                           coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                                              sf::st_transform(crs = map.crs),
+                                mapping = aes(label = label, fontface = "bold"), 
                                 size = 3.5, color = c("#40498EFF"))+
                     theme_bw() +
                     theme(axis.title = element_blank(),
@@ -516,13 +512,17 @@
           sf::st_transform(crs = map.crs)-> potlifts_mapdat 
         
         #set up plotting features
-        map_layers <- suppressWarnings(akgfmaps::get_base_layers(select.region = "bs.south", set.crs="auto")) # get map layers
+        map_layers <- map_layers <- readRDS("./Data/akgfmaps_layers.rds")
         
         plot.boundary.untrans <- data.frame(y = c(54, 59.5), 
                                             x = c(-168, -158)) 
         
-        plot.boundary <- plot.boundary.untrans %>%
-          akgfmaps::transform_data_frame_crs(out.crs = map.crs) # specify plot boundary
+        plot.boundary <-  plot.boundary.untrans %>%
+                                  sf::st_as_sf(coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                                  sf::st_transform(crs = map.crs) %>%
+                                  sf::st_coordinates() %>%
+                                  as.data.frame() %>%
+                                  dplyr::rename(x = X, y = Y) # plot boundary projected
         
         breaks.x <- map_layers$lon.breaks[(map_layers$lon.breaks >= plot.boundary.untrans$x[1] &  # set lon breaks
                                              map_layers$lon.breaks < plot.boundary.untrans$x[2]) == TRUE]
