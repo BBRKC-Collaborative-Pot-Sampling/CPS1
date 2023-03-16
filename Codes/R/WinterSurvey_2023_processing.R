@@ -19,35 +19,35 @@
 # LOAD DATA -----------------------------------------------------------------------------------------------------------------
   
   # Load summary catch and specimen tables
-      catch <- list.files("./Data/FTP/Catch - FTP/") %>%
-        purrr::map_df(~read.csv(paste0("./Data/FTP/Catch - FTP/", .x)))
+      catch <- list.files("./Data/Catch - FTP/") %>%
+        purrr::map_df(~read.csv(paste0("./Data/Catch - FTP/", .x)))
       
-      specimen <- list.files("./Data/FTP/Specimen - FTP/") %>%
-        purrr::map_df(~read.csv(paste0("./Data/FTP/Specimen - FTP/", .x)))
+      specimen <- list.files("./Data/Specimen - FTP/") %>%
+        purrr::map_df(~read.csv(paste0("./Data/Specimen - FTP/", .x)))
       
   # Load raw data for processing below   
-      raw_sample <- list.files("./Data/FTP/RawData - FTP/", pattern = "_SAMPLE_0") %>% # RECORDS of SAMPLE INFO
-        purrr::map_df(~read.csv(paste0("./Data/FTP/RawData - FTP/", .x))) #E.G. SEX, SPECIES
+      raw_sample <- list.files("./Data/Raw Data - FTP/", pattern = "_SAMPLE_0") %>% # RECORDS of SAMPLE INFO
+        purrr::map_df(~read.csv(paste0("./Data/Raw Data - FTP/", .x))) #E.G. SEX, SPECIES
       
-      raw_sample_values <- list.files("./Data/FTP/RawData - FTP/", pattern = "_SAMPLE_VALUES") %>% #RECORDS OF # TOSSED
-        purrr::map_df(~read.csv(paste0("./Data/FTP/RawData - FTP/", .x))) %>%
+      raw_sample_values <- list.files("./Data/Raw Data - FTP/", pattern = "_SAMPLE_VALUES") %>% #RECORDS OF # TOSSED
+        purrr::map_df(~read.csv(paste0("./Data/Raw Data - FTP/", .x))) %>%
         mutate(TOSSED = ifelse(is.na(COUNT) == FALSE, COUNT,0)) %>%
         group_by(HAUL_ID, CATCH_SAMPLE_ID) %>%
         dplyr::reframe(TOSSED = sum(TOSSED)) 
       
-      raw_specimen <- list.files("./Data/FTP/RawData - FTP/", pattern = "_SPECIMEN_0") %>% 
-        purrr::map_df(~read.csv(paste0("./Data/FTP/RawData - FTP/", .x))) %>%
+      raw_specimen <- list.files("./Data/Raw Data - FTP/", pattern = "_SPECIMEN_0") %>% 
+        purrr::map_df(~read.csv(paste0("./Data/Raw Data - FTP/", .x))) %>%
         dplyr::select(HAUL_ID, SPECIMEN_ID, CATCH_SAMPLE_ID, SPECIES_CODE)
       
-      raw_specimen_bio<- list.files("./Data/FTP/RawData - FTP/", pattern = "_SPECIMEN_BIOMETRICS") %>% 
-        purrr::map_df(~read.csv(paste0("./Data/FTP/RawData - FTP/", .x))) 
+      raw_specimen_bio<- list.files("./Data/Raw Data - FTP/", pattern = "_SPECIMEN_BIOMETRICS") %>% 
+        purrr::map_df(~read.csv(paste0("./Data/Raw Data - FTP/", .x))) 
       
   # Read in potlifts and tagging data
-      potlifts <- list.files("./Data/FTP/", pattern = "POTLIFTS", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
-        purrr::map_df(~read.csv(paste0("./Data/FTP/", .x))) 
+      potlifts <- list.files("./Data/", pattern = "POTLIFTS", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
+        purrr::map_df(~read.csv(paste0("./Data/", .x))) 
       
-      tagging <- list.files("./Data/FTP/", pattern = "TAGGING", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
-        purrr::map_df(~read.csv(paste0("./Data/FTP/", .x))) 
+      tagging <- list.files("./Data/", pattern = "TAGGING", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
+        purrr::map_df(~read.csv(paste0("./Data/", .x))) 
     
   # Read in spatial layers for mapping purposes 
       # Set crs
