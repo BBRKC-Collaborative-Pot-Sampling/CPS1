@@ -120,8 +120,8 @@
                           multiple = "all") %>%
         dplyr::left_join(specimen) %>%
         distinct() %>%
-        dplyr::rename(POT_ID = HAUL) %>% 
-        dplyr::right_join(potlifts, ., by = c("VESSEL", "POT_ID"), multiple = "all") %>%
+        dplyr::rename(SPN = HAUL) %>% 
+        dplyr::right_join(potlifts, ., by = c("VESSEL", "SPN"), multiple = "all") %>%
         dplyr::filter(c(is.na(LAT_DD) & is.na(LON_DD) & is.na(SPN)) == FALSE) %>% # bad/gear testing hauls will have NA
         dplyr::select(CRUISE, VESSEL, SPN, POT_ID, BUOY, LAT_DD, LON_DD, DATE_HAUL, TIME_HAUL, SOAK_TIME, DEPTH_F,
                       SPECIES_CODE, SEX, LENGTH, WIDTH, SAMPLING_FACTOR, SHELL_CONDITION, EGG_COLOR, EGG_CONDITION, 
@@ -138,14 +138,14 @@
       specimen_table %>%
         dplyr::group_by(CRUISE, VESSEL, SPN, POT_ID, SPECIES_CODE) %>%
         dplyr::reframe(NUMBER_CRAB = sum(SAMPLING_FACTOR)) %>%
-        dplyr::right_join(catch %>% dplyr::rename(POT_ID = HAUL, N_ENTRIES = NUMBER_CRAB)) %>%
+        dplyr::right_join(catch %>% dplyr::rename(SPN = HAUL, N_ENTRIES = NUMBER_CRAB)) %>%
         dplyr::select(CRUISE, VESSEL, SPN, POT_ID, SPECIES_CODE, NUMBER_CRAB, N_ENTRIES) %>%
         na.omit() -> catch_summary # bad/gear testing potlifts will have NA for SPN and # crab
       
   # Process catch_summary table for Oracle, save
       catch_summary %>%
         dplyr::select(!N_ENTRIES) %>%
-        dplyr::rename(HAUL = POT_ID) %>%
+        dplyr::rename(HAUL = SPN) %>%
         write.csv("./DataForOracle/Processed_Catch_Summary.csv")
 
 # CALCULATE AND MAP BBRKC CPUE ---------------------------------------------------------------------------------------------     
@@ -197,10 +197,10 @@
         sf::st_transform(crs = map.crs) %>%
         dplyr::mutate(VESSEL = ifelse(VESSEL == "162", "Summer Bay", "Silver Spray"),
                       MAT_SEX = "Mature male",
-                      shp = case_when((VESSEL == "Silver Spray" & N > 1) ~ 15,
-                                      (VESSEL == "Silver Spray" & N == 1) ~ 0,
-                                      (VESSEL == "Summer Bay" & N > 1) ~ 25, 
-                                      (VESSEL == "Summer Bay" & N == 1) ~ 6)) -> tagging_mapdat 
+                      shp = case_when((VESSEL == "Silver Spray" & N > 1) ~ "Silver Spray (n>1)",
+                                      (VESSEL == "Silver Spray" & N == 1) ~ "Silver Spray (n=1)",
+                                      (VESSEL == "Summer Bay" & N > 1) ~ "Summer Bay (n>1)", 
+                                      (VESSEL == "Summer Bay" & N == 1) ~ "Summer Bay (n=1)")) -> tagging_mapdat 
       
       
   #set up plotting features
@@ -227,6 +227,10 @@
       
       pal <- viridis::mako(10) # set palette
       
+      shapes <- c(0,2,15,17) #set shape mapping
+      names(shapes) <- c("Silver Spray (n=1)", "Summer Bay (n=1)", "Silver Spray (n>1)", "Summer Bay (n>1)")
+      
+
   # Plot
       mat_sex_combos %>%
         purrr::map(~ggplot() +
@@ -239,8 +243,10 @@
                              mapping = aes(size=COUNT, fill = COUNT), shape = 21, colour = "black", stat="identity", position="identity")+
                     geom_sf(data = filter(tagging_mapdat, MAT_SEX == .x),
                              mapping = aes(shape = as.factor(shp)), size= 2.5, stat="identity", position="identity")+
-                    scale_shape_manual(values = c(0, 2, 15, 17), 
-                                       labels = c("Silver Spray (n=1)", "Summer Bay (n=1)", "Silver Spray (n>1)", "Summer Bay (n>1)"))+
+                    #scale_shape_manual(values = c(0, 2, 15, 17), 
+                                       #labels = c("Silver Spray (n=1)", "Summer Bay (n=1)", "Silver Spray (n>1)", "Summer Bay (n>1)"),
+                                       #drop = FALSE)+
+                    scale_shape_manual(values = shapes)+
                     scale_size_continuous(range = c(2, 10), limits = c(0, max(filter(pot_cpue_mapdat, MAT_SEX == .x)$COUNT)))+ 
                     scale_fill_gradientn(limits = c(0, max(filter(pot_cpue_mapdat, MAT_SEX == .x)$COUNT)), 
                                           colors = c("gray", rev(pal[5:length(pal)])))+
