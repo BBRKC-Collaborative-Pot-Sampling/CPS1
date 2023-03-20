@@ -43,10 +43,10 @@
         purrr::map_df(~read.csv(paste0("./Data/Raw Data - FTP/", .x))) 
       
   # Read in potlifts and tagging data
-      potlifts <- list.files("./Data/", pattern = "POTLIFTS", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
+      potlifts <- list.files("./Data/", pattern = "POTLIFTS_DB", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
         purrr::map_df(~read.csv(paste0("./Data/", .x))) 
       
-      tagging <- list.files("./Data/", pattern = "TAGGING", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
+      tagging <- list.files("./Data/", pattern = "TAGGING_DB", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
         purrr::map_df(~read.csv(paste0("./Data/", .x))) 
     
   # Read in spatial layers for mapping purposes 
@@ -91,8 +91,9 @@
     
   # Join raw_sample_values and raw_sample to get # tossed per haul, sex, and catch sample id
       samples <- right_join(raw_sample, raw_sample_values) %>%
-        dplyr::select(HAUL_ID, CATCH_SAMPLE_ID, SPECIES_CODE, SPECIES_NAME, SEX, TOSSED)
-    
+        mutate(SEX=as.numeric(SEX)) %>%
+        dplyr::select(HAUL_ID, CATCH_SAMPLE_ID, SPECIES_CODE, SPECIES_NAME,SEX , TOSSED)
+
   # Expand specimen biometric table, join to raw_specimen table to get catch sample ID, join with samples file to get 
   # number tossed
       raw_specimen_bio %>%
