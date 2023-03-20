@@ -97,15 +97,9 @@
     
   # Join raw_sample_values and raw_sample to get # tossed per haul, sex, and catch sample id
       samples <- right_join(raw_sample, raw_sample_values) %>%
-<<<<<<< HEAD:Codes/R/WinterSurvey_2023_processing_JIR03202023.R
-        mutate(SEX=as.numeric(SEX)) %>%
-        dplyr::select(HAUL_ID, CATCH_SAMPLE_ID, SPECIES_CODE, SPECIES_NAME,SEX , TOSSED)
-
-=======
         right_join(., catch %>% select(HAUL, HAUL_ID, RECORDING_DEVICE)) %>%
         dplyr::select(HAUL, HAUL_ID, CATCH_SAMPLE_ID, SPECIES_CODE, SPECIES_NAME, SEX, TOSSED, RECORDING_DEVICE)
     
->>>>>>> 091adf46e0ea6770ff30d37db8848664bba25764:Codes/R/WinterSurvey_2023_processing.R
   # Expand specimen biometric table, join to raw_specimen table to get catch sample ID, join with samples file to get 
   # number tossed
       raw_specimen_bio %>%
@@ -308,7 +302,7 @@
         
         
         # "2) Does the vessel # match the vessels utilized in the survey?"
-        if(unique(specimen_table$VESSEL) %in% c(162, 164) == FALSE){
+        if(unique(specimen_table$VESSEL) %in% c(162, 94) == FALSE){
           print("ERROR: vessel numbers entered do not match survey vessels")
         }
         
