@@ -24,7 +24,7 @@
       
       specimen <- list.files("./Data/Specimen - FTP/") %>%
         purrr::map_df(~read.csv(paste0("./Data/Specimen - FTP/", .x))) 
-                      #%>% mutate(STATION = paste0("X_", STATION))) 
+                      #%>% mutate(STATION = paste0("X", STATION))) 
       
   # Load raw data for processing below   
       raw_sample <- list.files("./Data/Raw Data - FTP/", pattern = "_SAMPLE_0") %>% # RECORDS of SAMPLE INFO
@@ -48,7 +48,7 @@
       potlifts <- list.files("./Data/", pattern = "POTLIFTS", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
         purrr::map_df(~read.csv(paste0("./Data/", .x))) %>%
               filter(DATE_HAUL != "")
-                      #%>% mutate(BUOY = paste0("X_", BUOY))) %>%
+                      #%>% mutate(BUOY = paste0("X", BUOY))) %>%
       #potlifts$LON_DEG <- 161
       
       tagging <- list.files("./Data/", pattern = "TAGGING", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
