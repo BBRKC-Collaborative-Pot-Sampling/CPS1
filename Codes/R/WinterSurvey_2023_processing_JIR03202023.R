@@ -20,10 +20,11 @@
   
   # Load summary catch and specimen tables
       catch <- list.files("./Data/Catch - FTP/") %>%
-        purrr::map_df(~read.csv(paste0("./Data/Catch - FTP/", .x)))
+        purrr::map_df(~read.csv(paste0("./Data/Catch - FTP/", .x))) 
       
       specimen <- list.files("./Data/Specimen - FTP/") %>%
-        purrr::map_df(~read.csv(paste0("./Data/Specimen - FTP/", .x)))
+        purrr::map_df(~read.csv(paste0("./Data/Specimen - FTP/", .x))) 
+                      #%>% mutate(STATION = paste0("X", STATION))) 
       
   # Load raw data for processing below   
       raw_sample <- list.files("./Data/Raw Data - FTP/", pattern = "_SAMPLE_0") %>% # RECORDS of SAMPLE INFO
@@ -40,11 +41,20 @@
         dplyr::select(HAUL_ID, SPECIMEN_ID, CATCH_SAMPLE_ID, SPECIES_CODE)
       
       raw_specimen_bio<- list.files("./Data/Raw Data - FTP/", pattern = "_SPECIMEN_BIOMETRICS") %>% 
-        purrr::map_df(~read.csv(paste0("./Data/Raw Data - FTP/", .x))) 
+        purrr::map_df(~read.csv(paste0("./Data/Raw Data - FTP/", .x))) %>%
+        right_join(., catch %>% select(HAUL, HAUL_ID, RECORDING_DEVICE))
       
   # Read in potlifts and tagging data
+<<<<<<< HEAD:Codes/R/WinterSurvey_2023_processing_JIR03202023.R
       potlifts <- list.files("./Data/", pattern = "POTLIFTS_DB", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
         purrr::map_df(~read.csv(paste0("./Data/", .x))) 
+=======
+      potlifts <- list.files("./Data/", pattern = "POTLIFTS", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
+        purrr::map_df(~read.csv(paste0("./Data/", .x))) %>%
+              filter(DATE_HAUL != "")
+                      #%>% mutate(BUOY = paste0("X", BUOY))) %>%
+      #potlifts$LON_DEG <- 161
+>>>>>>> 091adf46e0ea6770ff30d37db8848664bba25764:Codes/R/WinterSurvey_2023_processing.R
       
       tagging <- list.files("./Data/", pattern = "TAGGING_DB", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
         purrr::map_df(~read.csv(paste0("./Data/", .x))) 
@@ -91,33 +101,41 @@
     
   # Join raw_sample_values and raw_sample to get # tossed per haul, sex, and catch sample id
       samples <- right_join(raw_sample, raw_sample_values) %>%
+<<<<<<< HEAD:Codes/R/WinterSurvey_2023_processing_JIR03202023.R
         mutate(SEX=as.numeric(SEX)) %>%
         dplyr::select(HAUL_ID, CATCH_SAMPLE_ID, SPECIES_CODE, SPECIES_NAME,SEX , TOSSED)
 
+=======
+        right_join(., catch %>% select(HAUL, HAUL_ID, RECORDING_DEVICE)) %>%
+        dplyr::select(HAUL, HAUL_ID, CATCH_SAMPLE_ID, SPECIES_CODE, SPECIES_NAME, SEX, TOSSED, RECORDING_DEVICE)
+    
+>>>>>>> 091adf46e0ea6770ff30d37db8848664bba25764:Codes/R/WinterSurvey_2023_processing.R
   # Expand specimen biometric table, join to raw_specimen table to get catch sample ID, join with samples file to get 
   # number tossed
       raw_specimen_bio %>%
-        dplyr::select(HAUL_ID, SPECIMEN_ID, BIOMETRIC_NAME, VALUE) %>%
-        pivot_wider(., names_from = "BIOMETRIC_NAME", values_from = "VALUE") %>%
+        dplyr::select(HAUL, HAUL_ID, SPECIMEN_ID, BIOMETRIC_NAME, VALUE, RECORDING_DEVICE) %>%
+        pivot_wider(., id_cols = c(HAUL, HAUL_ID, SPECIMEN_ID, RECORDING_DEVICE), 
+                    names_from = "BIOMETRIC_NAME", values_from = "VALUE") %>%
         dplyr::rename(SHELL_CONDITION = CRAB_SHELL_CONDITION, EGG_COLOR = CRAB_EGG_COLOR,
                       EGG_CONDITION = CRAB_EGG_CONDITION, CLUTCH_SIZE = CRAB_EGG_CLUTCH_SIZE,
                       LENGTH = CARAPACE_LENGTH) %>%
-        right_join(., raw_specimen) %>%
-        right_join(samples, ., by = c("HAUL_ID", "CATCH_SAMPLE_ID", "SPECIES_CODE", "SEX"), 
+        #right_join(., raw_specimen) %>%
+        right_join(samples, ., by = c("HAUL", "HAUL_ID", "SEX", "RECORDING_DEVICE"), 
                    multiple = "all") -> specimen_sum
       
   # Calculate sampling factor from specimen summary table, join back with specimen_sum file to 
   # get specimen information, join with catch file to get vessel and pot #s, join with potlifts
   # file to get lat/lon, set/haul date and time for each pot (with positive catch)
       specimen_sum %>%
-        dplyr::group_by(HAUL_ID, CATCH_SAMPLE_ID, SEX) %>%
+        dplyr::group_by(HAUL, HAUL_ID, CATCH_SAMPLE_ID, SEX, RECORDING_DEVICE) %>%
         dplyr::reframe(KEPT = n(),
                   TOSSED = TOSSED,
                   SAMPLING_FACTOR = (KEPT + TOSSED)/KEPT) %>%
         distinct() %>%
-        dplyr::right_join(specimen_sum, by = c("HAUL_ID", "CATCH_SAMPLE_ID", "SEX", "TOSSED"),
+        dplyr::right_join(specimen_sum, by = c("HAUL", "HAUL_ID", "CATCH_SAMPLE_ID", "SEX", "TOSSED",
+                                               "RECORDING_DEVICE"),
                           multiple = "all") %>%
-        dplyr::right_join(catch,., by = c("SPECIES_CODE", "HAUL_ID"),
+        dplyr::right_join(catch,., by = c("HAUL", "HAUL_ID", "SPECIES_CODE", "RECORDING_DEVICE"),
                           multiple = "all") %>%
         dplyr::left_join(specimen) %>%
         distinct() %>%
