@@ -211,7 +211,7 @@
                                       (VESSEL == "Silver Spray" & N == 1) ~ "Silver Spray (n=1)",
                                       (VESSEL == "Summer Bay" & N > 1) ~ "Summer Bay (n>1)", 
                                       (VESSEL == "Summer Bay" & N == 1) ~ "Summer Bay (n=1)")) -> tagging_mapdat 
-      
+  
       
   #set up plotting features
       map_layers <- readRDS("./Data/akgfmaps_layers.rds")
@@ -341,23 +341,23 @@
         print("CHECKING SHELL CONDITION, EGG COLOR, EGG CONDITION, CLUTCH_SIZE...")
         
         #5) Are egg color codes valid for females?"
-        if(unique(filter(specimen_table, SEX != 1)$EGG_COLOR %in% c(0, 2:6)) == FALSE){
+        if(FALSE %in% (unique(filter(specimen_table, SEX != 1)$EGG_COLOR %in% c(0, 2:6))) == TRUE){
           print("ERROR: invalid female egg color code (not 0 or 2:6)")
         }
         
         #6) Are egg condition codes valid for females?"
-        if(unique(filter(specimen_table, SEX != 1)$EGG_CONDITION %in% c(0:4) == FALSE)){
+        if(FALSE %in% (unique(filter(specimen_table, SEX != 1)$EGG_CONDITION %in% c(0:4))) == TRUE){
           print("ERROR: invalid female egg condition code (not 0:4)")
         } 
         
         # 7) Are clutch size codes valid for females?
-        if(unique(filter(specimen_table, SEX != 1)$CLUTCH_SIZE %in% c(0:6)) == FALSE){
+        if(FALSE %in% (unique(filter(specimen_table, SEX != 1)$CLUTCH_SIZE %in% c(0:6))) == TRUE){
           print("ERROR: invalid female clutch size code (not 0:6)")
         }
         
         # 8) Any egg, egg condition, or clutch size codes assigned to males?
-        if(unique((specimen_table$SEX == 1 & is.na(specimen_table$EGG_COLOR | specimen_table$EGG_CONDITION | 
-                                                   specimen_table$CLUTCH_SIZE) == FALSE))== TRUE){
+        if(TRUE %in% (unique((specimen_table$SEX == 1 & is.na(specimen_table$EGG_COLOR | specimen_table$EGG_CONDITION | 
+                                                   specimen_table$CLUTCH_SIZE) == FALSE))) == TRUE){
           print("ERROR: egg, egg condition, or clutch size code assigned to male")
         } 
         
@@ -365,32 +365,32 @@
         # 9) Any questionable egg condition x shell condition combinations for females?"
         
         # Checking shell condition = 0 and egg condition = 1
-        if(unique(filter(specimen_table, SEX != 1)$SHELL_CONDITION == 0 & 
-                  filter(specimen_table, SEX != 1)$EGG_CONDITION == 1) == TRUE){
+        if(TRUE %in% (unique(filter(specimen_table, SEX != 1)$SHELL_CONDITION == 0 & 
+                  filter(specimen_table, SEX != 1)$EGG_CONDITION == 1)) == TRUE){
           print("ERROR: female with shell condition = 0 and egg condition = 1")
         } 
         
         # Checking shell condition = 1 and egg condition >1
-        if(unique(filter(specimen_table, SEX != 1)$SHELL_CONDITION == 1 & 
-                  filter(specimen_table, SEX != 1)$EGG_CONDITION > 1) == TRUE){
+        if(TRUE %in% (unique(filter(specimen_table, SEX != 1)$SHELL_CONDITION == 1 & 
+                  filter(specimen_table, SEX != 1)$EGG_CONDITION > 1)) == TRUE){
           print("ERROR: female with shell condition = 1 and egg condition >1")
         }
         
         # Checking shell condition = 3, 4, or 5 and egg condition = 1
-        if(unique(filter(specimen_table, SEX != 1)$SHELL_CONDITION %in% c(3:5) & 
-                  filter(specimen_table, SEX != 1)$EGG_CONDITION == 1) == TRUE){
+        if(TRUE %in% (unique(filter(specimen_table, SEX != 1)$SHELL_CONDITION %in% c(3:5) & 
+                  filter(specimen_table, SEX != 1)$EGG_CONDITION == 1)) == TRUE){
           print("ERROR: female with shell condition 3:5 and egg condition = 1")
         }
         
         # Checking shell condition = 1 and egg condition >=2
-        if(unique(filter(specimen_table, SEX != 1)$SHELL_CONDITION ==1 & 
-                  filter(specimen_table, SEX != 1)$EGG_CONDITION >=2) == TRUE){
+        if(TRUE %in% (unique(filter(specimen_table, SEX != 1)$SHELL_CONDITION ==1 & 
+                  filter(specimen_table, SEX != 1)$EGG_CONDITION >=2)) == TRUE){
           print("ERROR: female with shell condition = 1 and egg condition >=2")
         }
         
         #10) Any females without egg color, egg condition, or clutch codes?
-        if(unique(specimen_table$SEX == 2 & (is.na(specimen_table$EGG_COLOR | specimen_table$EGG_CONDITION 
-                                                   | specimen_table$CLUTCH_SIZE) == TRUE)) == TRUE){
+        if(TRUE %in% (unique(specimen_table$SEX == 2 & (is.na(specimen_table$EGG_COLOR | specimen_table$EGG_CONDITION 
+                                                   | specimen_table$CLUTCH_SIZE) == TRUE))) == TRUE){
           print("ERROR: female missing egg color, egg condition, or clutch code")
         }
         
