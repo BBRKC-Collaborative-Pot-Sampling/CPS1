@@ -53,7 +53,8 @@
                       #potlifts$LON_DEG <- 161
       
       tagging <- list.files("./Data/", pattern = "TAGGING", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
-        purrr::map_df(~read.csv(paste0("./Data/", .x))) 
+        purrr::map_df(~read.csv(paste0("./Data/", .x)) %>% select(!CAPTURE_SPN)) %>%
+        filter(is.na(LON_MIN) == FALSE)
     
   # Read in spatial layers for mapping purposes 
       # Set crs
@@ -249,7 +250,7 @@
                     geom_sf(data = st_as_sf(RKCSA), fill = NA, color = "red", alpha =0.5, linewidth = 1) +
                     geom_sf(data = map_layers$akland, fill = "grey80") +
                     geom_sf(data = filter(pot_cpue_mapdat, MAT_SEX == .x),
-                             mapping = aes(size=COUNT, fill = COUNT), shape = 21, colour = "black", stat="identity", position="identity")+
+                             mapping = aes(size=COUNT, fill = COUNT), alpha = 0.5, shape = 21, colour = "black", stat="identity", position="identity")+
                     geom_sf(data = filter(tagging_mapdat, MAT_SEX == .x),
                              mapping = aes(shape = as.factor(shp)), size= 2.5, stat="identity", position="identity")+
                     #scale_shape_manual(values = c(0, 2, 15, 17), 
@@ -302,7 +303,7 @@
         
         
         # "2) Does the vessel # match the vessels utilized in the survey?"
-        if(unique(specimen_table$VESSEL) %in% c(162, 94) == FALSE){
+        if(FALSE %in% (unique(specimen_table$VESSEL) %in% c(162, 94)) == TRUE){
           print("ERROR: vessel numbers entered do not match survey vessels")
         }
         
