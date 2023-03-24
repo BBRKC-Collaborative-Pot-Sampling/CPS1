@@ -47,7 +47,7 @@
   # Read in potlifts and tagging data
       potlifts <- list.files("./Data/", pattern = "POTLIFTS", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
         purrr::map_df(~read.csv(paste0("./Data/", .x))) %>%
-              filter(DATE_HAUL != "")
+        filter(DATE_HAUL != "")
                       #%>% mutate(BUOY = paste0("X", BUOY))) %>%
       
                       #potlifts$LON_DEG <- 161
@@ -86,7 +86,7 @@
                     LAT_DD = LAT_DEG + LAT_MIN/60,
                     LON_DD = (LON_DEG + LON_MIN/60)*-1) %>%
       dplyr::select(!c(DATETIME_SET, DATETIME_HAUL)) %>%
-      dplyr::filter(is.na(VESSEL) == "FALSE" & is.na(GEAR_CODE) == TRUE) -> potlifts
+      dplyr::filter(is.na(VESSEL) == "FALSE" & is.na(GEAR_CODE) == TRUE | GEAR_CODE == "") -> potlifts
     
   # Calculate lat/lon in degrees decimal for tagging release points and # of tags released per station
     tagging %>%
