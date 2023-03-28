@@ -54,7 +54,11 @@
       
       tagging <- list.files("./Data/", pattern = "TAGGING", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
         purrr::map_df(~read.csv(paste0("./Data/", .x)) %>% select(!CAPTURE_SPN)) %>%
-        filter(is.na(LON_MIN) == FALSE)
+        filter(is.na(LON_MIN) == FALSE) %>%
+        dplyr::mutate(LAT_MIN = ifelse((DISK %in% 957:961), 3.18, LAT_MIN),
+                      LON_MIN = ifelse((DISK %in% 957:961), 26.9, LON_MIN)) #hardcoding common release point
+                                                                            #for these hotspots for mapping purposes;
+                                                                            #actual release points can be found in tagging file
     
   # Read in spatial layers for mapping purposes 
       # Set crs
@@ -94,7 +98,10 @@
                     LON_DD = (LON_DEG + LON_MIN/60)*-1) %>%
       dplyr::filter(is.na(VESSEL) == "FALSE") %>%
       dplyr::group_by(VESSEL, LON_DD, LAT_DD) %>%
-      dplyr::reframe(LAT_DD = LAT_DD, LON_DD = LON_DD, N = n()) -> tagging
+      dplyr::reframe(LAT_DD = LAT_DD, LON_DD = LON_DD, N = n()) %>%
+      dplyr::distinct()-> tagging
+    
+    
     
   # Join raw_sample_values and raw_sample to get # tossed per haul, sex, and catch sample id
       samples <- right_join(raw_sample, raw_sample_values) %>%
@@ -246,7 +253,7 @@
         purrr::map(~ggplot() +
                     #geom_sf(data = map_layers$bathymetry, color=alpha("grey70")) +
                     geom_sf(data = st_as_sf(BB_strata), fill = NA, color = "black", linewidth = 1) +
-                    geom_sf(data = st_as_sf(RKCSA_sub), fill = NA, color = "red", alpha= 0.5, linewidth = 1) +
+                    geom_sf(data = st_as_sf(RKCSA_sub), fill = NA, color = "red", alpha= 0.9, linewidth = 1) +
                     geom_sf(data = st_as_sf(RKCSA), fill = NA, color = "red", alpha =0.5, linewidth = 1) +
                     geom_sf(data = map_layers$akland, fill = "grey80") +
                     geom_sf(data = filter(pot_cpue_mapdat, MAT_SEX == .x),
