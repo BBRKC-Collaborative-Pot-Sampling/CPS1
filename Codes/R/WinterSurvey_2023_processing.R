@@ -23,8 +23,8 @@
         purrr::map_df(~read.csv(paste0("./Data/Catch - FTP/", .x))) 
       
       specimen <- list.files("./Data/Specimen - FTP/") %>%
-        purrr::map_df(~read.csv(paste0("./Data/Specimen - FTP/", .x))) 
-                      #%>% mutate(STATION = paste0("X", STATION))) 
+        purrr::map_df(~read.csv(paste0("./Data/Specimen - FTP/", .x))
+                      %>% mutate(STATION = paste0("X", STATION))) 
       
   # Load raw data for processing below   
       raw_sample <- list.files("./Data/Raw Data - FTP/", pattern = "_SAMPLE_0") %>% # RECORDS of SAMPLE INFO
@@ -54,12 +54,17 @@
       
       tagging <- list.files("./Data/", pattern = "TAGGING", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
         purrr::map_df(~read.csv(paste0("./Data/", .x)) %>% select(!CAPTURE_SPN)) %>%
-        filter(is.na(LON_MIN) == FALSE) %>%
-        dplyr::mutate(LAT_MIN = ifelse((DISK %in% 957:961), 3.18, LAT_MIN),
-                      LON_MIN = ifelse((DISK %in% 957:961), 26.9, LON_MIN)) #hardcoding common release point
-                                                                            #for these hotspots for mapping purposes;
-                                                                            #actual release points can be found in tagging file
-    
+        filter(is.na(LON_MIN) == FALSE) 
+      
+      #hardcoding common release point for these hotspots for mapping purposes;
+      #actual release points are slightly different and can be found in tagging file
+      
+      tagging$LAT_MIN[which(tagging$DISK %in% 957:961)] <- 3.18
+      tagging$LAT_MIN[which(tagging$DISK %in% c(963:966, 956))] <- 53.29
+      
+      tagging$LON_MIN[which(tagging$DISK %in% 957:961)] <- 26.9
+      tagging$LON_MIN[which(tagging$DISK %in% c(963:966, 956))] <- 20.42
+      
   # Read in spatial layers for mapping purposes 
       # Set crs
       map.crs <- "EPSG:3338"
