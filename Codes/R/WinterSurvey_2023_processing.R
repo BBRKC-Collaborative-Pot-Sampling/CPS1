@@ -23,8 +23,8 @@
         purrr::map_df(~read.csv(paste0("./Data/Catch - FTP/", .x))) 
       
       specimen <- list.files("./Data/Specimen - FTP/") %>%
-        purrr::map_df(~read.csv(paste0("./Data/Specimen - FTP/", .x))
-                      %>% mutate(STATION = paste0("X", STATION))) 
+        purrr::map_df(~read.csv(paste0("./Data/Specimen - FTP/", .x))) 
+                      #%>% mutate(STATION = paste0("X", STATION))) 
       
   # Load raw data for processing below   
       raw_sample <- list.files("./Data/Raw Data - FTP/", pattern = "_SAMPLE_0") %>% # RECORDS of SAMPLE INFO
