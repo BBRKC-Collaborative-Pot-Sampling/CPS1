@@ -23,8 +23,7 @@
         purrr::map_df(~read.csv(paste0("./Data/Catch - FTP/", .x))) 
       
       specimen <- list.files("./Data/Specimen - FTP/") %>%
-        purrr::map_df(~read.csv(paste0("./Data/Specimen - FTP/", .x))) 
-                      #%>% mutate(STATION = paste0("X", STATION))) 
+        purrr::map_df(~read.csv(paste0("./Data/Specimen - FTP/", .x))%>% mutate(STATION = paste0("X", STATION))) 
       
   # Load raw data for processing below   
       raw_sample <- list.files("./Data/Raw Data - FTP/", pattern = "_SAMPLE_0") %>% # RECORDS of SAMPLE INFO
@@ -149,6 +148,14 @@
                       SPECIES_CODE, SEX, LENGTH, WIDTH, SAMPLING_FACTOR, SHELL_CONDITION, EGG_COLOR, EGG_CONDITION, 
                       CLUTCH_SIZE, WEIGHT, DISEASE_CODE, DISEASE_DORSAL, DISEASE_VENTRAL, DISEASE_LEGS,  
                       CHELA_HEIGHT, MERUS_LENGTH, COMMENTS) -> specimen_table
+      
+  # Changing mature barren females to immature for Summer Bay (determined all females
+  # coded as mature barren were immature after seeing more immature females in the 
+  # last couple of strings in the survey, comparing to mature females, Silver Spray data
+  # (the other research vessel), and various other references)
+      specimen_table %>%
+        dplyr::mutate(CLUTCH_SIZE = ifelse((VESSEL == 162 & SEX == 2 & EGG_CONDITION == 0 
+                                     & EGG_COLOR == 0), 0, CLUTCH_SIZE)) -> specimen_table
       
   # Process specimen table for Oracle, save
       specimen_table %>%
