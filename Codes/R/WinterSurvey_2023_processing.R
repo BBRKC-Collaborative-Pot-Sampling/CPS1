@@ -4,7 +4,7 @@
   # 3) To calculate and map cpue by pot and mat/sex category for BBRKC
 
 # INSTALL PACKAGES ----------------------------------------------------------------------------------------------------------
-  #install.packages(c("tidyverse", "gsubfn", "terra", "rgdal", "colorRamps", "sf", "viridis"))
+  #install.packages(c("tidyverse", "gsubfn", "terra", "rgdal", "colorRamps", "sf", "viridis", "grid", "shadowtext"))
 
 
 # LOAD PACKAGES -------------------------------------------------------------------------------------------------------------
@@ -15,6 +15,8 @@
   library(colorRamps)
   library(sf)
   library(viridis)
+  library(grid)
+  library(shadowtext)
 
 # LOAD DATA -----------------------------------------------------------------------------------------------------------------
   
@@ -46,11 +48,10 @@
   # Read in potlifts and tagging data
       potlifts <- list.files("./Data/", pattern = "POTLIFTS", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
         purrr::map_df(~read.csv(paste0("./Data/", .x))) %>%
-        filter(DATE_HAUL != "")
-                      #%>% mutate(BUOY = paste0("X", BUOY))) %>%
-      
-                      #potlifts$LON_DEG <- 161
-      
+        filter(DATE_HAUL != "", is.na(VESSEL) == "FALSE" & is.na(GEAR_CODE) == TRUE | GEAR_CODE == "") %>% 
+        mutate(BUOY = paste0("X", BUOY)) 
+
+    
       tagging <- list.files("./Data/", pattern = "TAGGING", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
         purrr::map_df(~read.csv(paste0("./Data/", .x)) %>% select(!CAPTURE_SPN)) %>%
         filter(is.na(LON_MIN) == FALSE) 
@@ -93,8 +94,7 @@
                     SOAK_TIME = as.numeric(difftime(DATETIME_HAUL, DATETIME_SET, units = "hours")),
                     LAT_DD = LAT_DEG + LAT_MIN/60,
                     LON_DD = (LON_DEG + LON_MIN/60)*-1) %>%
-      dplyr::select(!c(DATETIME_SET, DATETIME_HAUL)) %>%
-      dplyr::filter(is.na(VESSEL) == "FALSE" & is.na(GEAR_CODE) == TRUE | GEAR_CODE == "") -> potlifts
+      dplyr::select(!c(DATETIME_SET, DATETIME_HAUL)) -> potlifts
     
   # Calculate lat/lon in degrees decimal for tagging release points and # of tags released per station
     tagging %>%
@@ -141,7 +141,7 @@
                           multiple = "all") %>%
         dplyr::left_join(specimen) %>%
         distinct() %>%
-        dplyr::rename(SPN = HAUL) %>% 
+        dplyr::rename(SPN = HAUL) %>%
         dplyr::right_join(potlifts, ., by = c("VESSEL", "SPN"), multiple = "all") %>%
         dplyr::filter(c(is.na(LAT_DD) & is.na(LON_DD) & is.na(SPN)) == FALSE) %>% # bad/gear testing hauls will have NA
         dplyr::select(CRUISE, VESSEL, SPN, POT_ID, BUOY, LAT_DD, LON_DD, DATE_HAUL, TIME_HAUL, SOAK_TIME, DEPTH_F,
@@ -589,3 +589,177 @@
   # Run function
     error_chk(specimen_table, catch_summary, potlifts, pot_cpue) 
       
+    
+# FINAL MAPS ------------------------------------------------------------------------------------------------------------------------------------------
+    
+    # Remove boat names from tagging data
+    tagging %>%
+      sf::st_as_sf(coords = c(x = "LON_DD", y = "LAT_DD"), crs = sf::st_crs(4326)) %>%
+      sf::st_transform(crs = map.crs) %>%
+      dplyr::mutate(VESSEL = ifelse(VESSEL == "162", "Summer Bay", "Silver Spray"),
+                    MAT_SEX = "Mature male",
+                    shp = case_when((N > 1) ~ "n>1",
+                                    (N == 1) ~ "n=1")) -> tagging_mapdat 
+    
+    #set up plotting features
+    map_layers <- readRDS("./Data/akgfmaps_layers.rds")
+    
+    plot.boundary.untrans <- data.frame(y = c(54.5, 58.5), 
+                                        x = c(-164.8, -159)) # plot boundary unprojected
+    
+    plot.boundary <- plot.boundary.untrans %>%
+      sf::st_as_sf(coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+      sf::st_transform(crs = map.crs) %>%
+      sf::st_coordinates() %>%
+      as.data.frame() %>%
+      dplyr::rename(x = X, y = Y) # plot boundary projected
+    
+    
+    breaks.x <- map_layers$lon.breaks[(map_layers$lon.breaks >= plot.boundary.untrans$x[1] &  # set lon breaks
+                                         map_layers$lon.breaks < plot.boundary.untrans$x[2]) == TRUE]
+    
+    breaks.y <- map_layers$lat.breaks[(map_layers$lat.breaks > plot.boundary.untrans$y[1] & # set lat breaks
+                                         map_layers$lat.breaks < plot.boundary.untrans$y[2]) == TRUE]
+    
+    max.date <- max(pot_cpue_mapdat$DATE_HAUL) # label for most recent pot haul date
+    
+    pal <- viridis::mako(10) # set palette
+    
+    shapes <- c(0,15) #set shape mapping
+    names(shapes) <- c("n=1", "n>1")
+    
+    mat_labs <- c("Mature female", "Immature female", "Mature male (>= 120mm)", "Legal male (>= 135mm)", "Immature male (< 120mm)", "Sublegal male")
+    names(mat_labs) <- c("Mature female", "Immature female", "Mature male", "Legal male", "Immature male", "Sublegal male")
+    
+    mat_labs <- data.frame(lab = c("Mature female", "Immature female", "Mature male (>= 120mm)", 
+                                   "Legal male (>= 135mm)", "Immature male (< 120mm)", "Sublegal male"),
+                           MAT_SEX = c("Mature female", "Immature female", "Mature male", "Legal male", "Immature male", "Sublegal male"))
+    
+    
+    # Plot without tagging
+    mat_sex_combos %>%
+      purrr::map(~ggplot() +
+                   geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+                   geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+                   geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+                   geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+                   geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+                   geom_sf(data = filter(pot_cpue_mapdat, MAT_SEX == .x),
+                           mapping = aes(size=COUNT, fill = COUNT, shape = COUNT == 0), alpha = 0.5, colour = "black")+
+                   #scale_shape_manual(values = c(0, 2, 15, 17), 
+                   #labels = c("Silver Spray (n=1)", "Summer Bay (n=1)", "Silver Spray (n>1)", "Summer Bay (n>1)"),
+                   #drop = FALSE)+
+                   scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none")+
+                   scale_color_manual(values = c("black", "red"), 
+                                      labels = c("EBS Summer Survey Boundary", "Red King Crab Savings Area"),
+                                      name = "") +
+                   scale_size_continuous(range = c(2, 10), limits = c(0, max(pot_cpue_mapdat$COUNT)), 
+                                         breaks =seq(0, max(pot_cpue_mapdat$COUNT), by = 25))+ 
+                   scale_fill_gradientn(breaks = seq(0, max(pot_cpue_mapdat$COUNT), by = 25),
+                                        limits = c(0, max(pot_cpue_mapdat$COUNT)), 
+                                        colors = c("gray", rev(pal[5:length(pal)])))+
+                   #scale_x_continuous(breaks = breaks.x, labels = paste0(breaks.x, "°W")) + 
+                   #scale_y_continuous(breaks = breaks.y, labels = paste0(breaks.y, "°N")) +
+                   scale_x_continuous(breaks = map_layers$lon.breaks)+
+                   scale_y_continuous(breaks = map_layers$lat.breaks)+
+                   labs(title = "2023 BBRKC Winter/Spring Pot Survey", subtitle = paste(filter(mat_labs, MAT_SEX == .x)$lab))+
+                   guides(size = guide_legend(title.position = "top", nrow = 2, override.aes = list(shape = c(4, rep(21, 5)))),
+                          fill = guide_legend(),
+                          color = guide_legend(nrow = 2))+
+                   coord_sf(xlim = plot.boundary$x,
+                            ylim = plot.boundary$y) +
+                   geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                             x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                            coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                                 sf::st_transform(crs = map.crs),
+                                 mapping = aes(label = lab))+
+                   theme_bw() +
+                   theme(axis.title = element_blank(),
+                         axis.text = element_text(size = 10),
+                         legend.text = element_text(size = 10),
+                         legend.title = element_text(size = 10),
+                         legend.position = "bottom",
+                         legend.direction = "horizontal",
+                         plot.title = element_text(face = "bold", size = 15),
+                         plot.subtitle = element_text(size = 12))) -> BBRKC.maps
+    
+    
+    BBRKC.maps[[1]] -> tag
+    
+    tt <- as.data.frame(cbind(tagging_mapdat, st_coordinates(tagging_mapdat)))
+    
+    tag +
+      geom_sf(data = filter(tagging_mapdat, MAT_SEX == "Mature male"),
+              mapping = aes(shape = as.factor(shp)), size= 4, stat="identity", position="identity") +
+      theme(axis.title = element_blank(),
+            axis.text = element_text(size = 10),
+            legend.text = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(face = "bold", size = 15),
+            plot.subtitle = element_text(size = 12))
+    
+    
+    
+    # Plot with tagging
+    mat_sex_combos %>%
+      purrr::map(~ggplot() +
+                   geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+                   geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+                   geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+                   geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+                   geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+                   geom_sf(data = filter(pot_cpue_mapdat, MAT_SEX == .x),
+                           mapping = aes(size=COUNT, fill = COUNT, shape = COUNT == 0), alpha = 0.5, colour = "black")+
+                   geom_sf(data = filter(tagging_mapdat, MAT_SEX == .x),
+                           mapping = aes(shape = as.factor(shp)), size= 4, stat="identity", position="identity")+
+        
+                   scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21, "n=1" = 0, "n>1" = 15),
+                                      labels = c("n>1", "n>1", "n>1", "n=1", "n>1"),
+                                      breaks = c("n>1", "n>1", "n>1", "n=1", "n>1"))+
+                   #scale_shape_manual(values = shapes)+
+                   scale_color_manual(values = c("black", "red"), 
+                                      labels = c("EBS Summer Survey Boundary", "Red King Crab Savings Area"),
+                                      name = "") +
+                   scale_size_continuous(range = c(2, 10), limits = c(0, max(pot_cpue_mapdat$COUNT)))+ 
+                   scale_fill_gradientn(limits = c(0, max(pot_cpue_mapdat$COUNT)), 
+                                        colors = c("gray", rev(pal[5:length(pal)])))+
+                   #scale_x_continuous(breaks = breaks.x, labels = paste0(breaks.x, "°W")) + 
+                   #scale_y_continuous(breaks = breaks.y, labels = paste0(breaks.y, "°N")) +
+                   scale_x_continuous(breaks = map_layers$lon.breaks)+
+                   scale_y_continuous(breaks = map_layers$lat.breaks)+
+                   labs(title = "2023 BBRKC Winter/Spring Pot Survey", subtitle = paste(filter(mat_labs, MAT_SEX == .x)$lab))+
+                   #ggtitle(paste("2023 BBRKC Winter/Spring Pot Survey", filter(mat_labs, MAT_SEX == .x)$lab)) +
+                   guides(size = guide_legend(title.position = "top", nrow = 2, override.aes = list(shape = c(4, rep(21, 5)))), 
+                          fill = guide_legend(), shape = guide_legend(title = "TAG RELEASE", title.position = "top", nrow =2),
+                                                                      #,
+                                                                      #override.aes = list(shape = c(0, 15))),
+                          color = guide_legend(nrow = 2))+
+                   coord_sf(xlim = plot.boundary$x,
+                            ylim = plot.boundary$y) +
+                   geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                                        x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                             coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                                  sf::st_transform(crs = map.crs),
+                                mapping = aes(label = lab))+
+                   theme_bw() +
+                   theme(axis.title = element_blank(),
+                         axis.text = element_text(size = 10),
+                         legend.text = element_text(size = 10),
+                         legend.title = element_text(size = 10),
+                         legend.position = "bottom",
+                         legend.direction = "horizontal",
+                         plot.title = element_text(face = "bold", size = 15),
+                         plot.subtitle = element_text(size = 12))) -> tagging_map
+
+    
+    # Save plots
+    ggsave(plot = BBRKC.maps[[1]], "./Figures/BBRKC_matmale.png", height=7, width=10, units="in")
+    ggsave(plot = tagging_map[[1]], "./Figures/BBRKC_matmaletagging.png", height=7, width=10, units="in")
+    ggsave(plot = BBRKC.maps[[2]], "./Figures/BBRKC_immale.png", height=7, width=10, units="in")
+    ggsave(plot = BBRKC.maps[[3]], "./Figures/BBRKC_matfem.png", height=7, width=10, units="in")
+    ggsave(plot = BBRKC.maps[[4]], "./Figures/BBRKC_imfem.png", height=7, width=10, units="in")
+    ggsave(plot = BBRKC.maps[[5]], "./Figures/BBRKC_legalmale.png", height=7, width=10, units="in")
+    ggsave(plot = BBRKC.maps[[6]], "./Figures/BBRKC_sublegalmale.png", height=7, width=10, units="in")
+    
