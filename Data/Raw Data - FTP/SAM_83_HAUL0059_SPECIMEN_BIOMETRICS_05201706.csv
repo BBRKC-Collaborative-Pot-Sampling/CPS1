@@ -1,0 +1,280 @@
+HAUL_ID,SPECIMEN_BIOMETRIC_ID,SPECIMEN_ID,BIOMETRIC_ID,VALUE,UNITS,BIOMETRIC_NAME,COMPOSITE_NAME,BIOMETRIC_TYPE_ID,BIOMETRIC_TYPE,CODE_VALUE_MEANING,RECORDING_DEVICE,RECORDER,RECORD_TIMESTAMP,DATABASE_STATUS,STATUS_TIMESTAMP,DEVICE_RECORD_ID
+43,4642,1180,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:55:22",0,"05/20/2018 16:55:22",4642
+43,4643,1180,11,115.76,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:55:22",0,"05/20/2018 16:55:22",4643
+43,4641,1180,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:55:22",0,"05/20/2018 16:55:22",4641
+43,4645,1181,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:55:33",0,"05/20/2018 16:55:33",4645
+43,4646,1181,11,99.80,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:55:33",0,"05/20/2018 16:55:33",4646
+43,4644,1181,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:55:33",0,"05/20/2018 16:55:33",4644
+43,4648,1182,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:55:44",0,"05/20/2018 16:55:44",4648
+43,4649,1182,11,107.32,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:55:44",0,"05/20/2018 16:55:44",4649
+43,4647,1182,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:55:44",0,"05/20/2018 16:55:44",4647
+43,4651,1183,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:55:52",0,"05/20/2018 16:55:52",4651
+43,4652,1183,11,116.53,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:55:52",0,"05/20/2018 16:55:52",4652
+43,4650,1183,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:55:52",0,"05/20/2018 16:55:52",4650
+43,4654,1184,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:55:58",0,"05/20/2018 16:55:58",4654
+43,4655,1184,11,127.98,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:55:58",0,"05/20/2018 16:55:58",4655
+43,4653,1184,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:55:58",0,"05/20/2018 16:55:58",4653
+43,4657,1185,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:03",0,"05/20/2018 16:56:03",4657
+43,4658,1185,11,119.80,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:03",0,"05/20/2018 16:56:03",4658
+43,4656,1185,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:03",0,"05/20/2018 16:56:03",4656
+43,4660,1186,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:11",0,"05/20/2018 16:56:11",4660
+43,4661,1186,11,118.83,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:11",0,"05/20/2018 16:56:11",4661
+43,4659,1186,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:11",0,"05/20/2018 16:56:11",4659
+43,4663,1187,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:20",0,"05/20/2018 16:56:20",4663
+43,4664,1187,11,120.50,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:20",0,"05/20/2018 16:56:20",4664
+43,4662,1187,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:20",0,"05/20/2018 16:56:20",4662
+43,4666,1188,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:26",0,"05/20/2018 16:56:26",4666
+43,4667,1188,11,125.24,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:26",0,"05/20/2018 16:56:26",4667
+43,4665,1188,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:26",0,"05/20/2018 16:56:26",4665
+43,4669,1189,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:32",0,"05/20/2018 16:56:32",4669
+43,4670,1189,11,123.54,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:32",0,"05/20/2018 16:56:32",4670
+43,4668,1189,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:32",0,"05/20/2018 16:56:32",4668
+43,4672,1190,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:38",0,"05/20/2018 16:56:38",4672
+43,4673,1190,11,100.32,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:38",0,"05/20/2018 16:56:38",4673
+43,4671,1190,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:38",0,"05/20/2018 16:56:38",4671
+43,4675,1191,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:45",0,"05/20/2018 16:56:45",4675
+43,4676,1191,11,125.50,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:45",0,"05/20/2018 16:56:45",4676
+43,4674,1191,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:45",0,"05/20/2018 16:56:45",4674
+43,4678,1192,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:53",0,"05/20/2018 16:56:53",4678
+43,4679,1192,11,124.08,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:53",0,"05/20/2018 16:56:53",4679
+43,4677,1192,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:53",0,"05/20/2018 16:56:53",4677
+43,4681,1193,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:59",0,"05/20/2018 16:56:59",4681
+43,4682,1193,11,120.79,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:59",0,"05/20/2018 16:56:59",4682
+43,4680,1193,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:56:59",0,"05/20/2018 16:56:59",4680
+43,4684,1194,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:06",0,"05/20/2018 16:57:06",4684
+43,4685,1194,11,129.89,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:06",0,"05/20/2018 16:57:06",4685
+43,4683,1194,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:06",0,"05/20/2018 16:57:06",4683
+43,4687,1195,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:13",0,"05/20/2018 16:57:13",4687
+43,4688,1195,11,119.19,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:13",0,"05/20/2018 16:57:13",4688
+43,4686,1195,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:13",0,"05/20/2018 16:57:13",4686
+43,4690,1196,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:19",0,"05/20/2018 16:57:19",4690
+43,4691,1196,11,130.05,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:19",0,"05/20/2018 16:57:19",4691
+43,4689,1196,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:19",0,"05/20/2018 16:57:19",4689
+43,4693,1197,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:26",0,"05/20/2018 16:57:26",4693
+43,4694,1197,11,125.85,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:26",0,"05/20/2018 16:57:26",4694
+43,4692,1197,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:26",0,"05/20/2018 16:57:26",4692
+43,4696,1198,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:31",0,"05/20/2018 16:57:31",4696
+43,4697,1198,11,111.14,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:31",0,"05/20/2018 16:57:31",4697
+43,4695,1198,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:31",0,"05/20/2018 16:57:31",4695
+43,4699,1199,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:37",0,"05/20/2018 16:57:37",4699
+43,4700,1199,11,105.38,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:37",0,"05/20/2018 16:57:37",4700
+43,4698,1199,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:37",0,"05/20/2018 16:57:37",4698
+43,4702,1200,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:45",0,"05/20/2018 16:57:45",4702
+43,4703,1200,11,116.82,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:45",0,"05/20/2018 16:57:45",4703
+43,4701,1200,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:45",0,"05/20/2018 16:57:45",4701
+43,4705,1201,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:53",0,"05/20/2018 16:57:53",4705
+43,4706,1201,11,131.65,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:53",0,"05/20/2018 16:57:53",4706
+43,4704,1201,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:57:53",0,"05/20/2018 16:57:53",4704
+43,4708,1202,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:58:06",0,"05/20/2018 16:58:06",4708
+43,4709,1202,11,138.81,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:58:06",0,"05/20/2018 16:58:06",4709
+43,4707,1202,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:58:06",0,"05/20/2018 16:58:06",4707
+43,4711,1203,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:58:15",0,"05/20/2018 16:58:15",4711
+43,4712,1203,11,115.31,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:58:15",0,"05/20/2018 16:58:15",4712
+43,4710,1203,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:58:15",0,"05/20/2018 16:58:15",4710
+43,4714,1204,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:58:20",0,"05/20/2018 16:58:20",4714
+43,4715,1204,11,136.35,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:58:20",0,"05/20/2018 16:58:20",4715
+43,4713,1204,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:58:20",0,"05/20/2018 16:58:20",4713
+43,4717,1205,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:58:30",0,"05/20/2018 16:58:30",4717
+43,4718,1205,11,139.43,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:58:30",0,"05/20/2018 16:58:30",4718
+43,4716,1205,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:58:30",0,"05/20/2018 16:58:30",4716
+43,4720,1206,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:58:36",0,"05/20/2018 16:58:36",4720
+43,4721,1206,11,115.01,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:58:36",0,"05/20/2018 16:58:36",4721
+43,4719,1206,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:58:36",0,"05/20/2018 16:58:36",4719
+43,4723,1207,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:58:46",0,"05/20/2018 16:58:46",4723
+43,4724,1207,11,150.44,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:58:46",0,"05/20/2018 16:58:46",4724
+43,4722,1207,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:58:46",0,"05/20/2018 16:58:46",4722
+43,4726,1208,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:00",0,"05/20/2018 16:59:00",4726
+43,4727,1208,11,149.07,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:00",0,"05/20/2018 16:59:00",4727
+43,4725,1208,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:00",0,"05/20/2018 16:59:00",4725
+43,4729,1209,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:08",0,"05/20/2018 16:59:08",4729
+43,4730,1209,11,155.24,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:08",0,"05/20/2018 16:59:08",4730
+43,4728,1209,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:08",0,"05/20/2018 16:59:08",4728
+43,4732,1210,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:15",0,"05/20/2018 16:59:15",4732
+43,4733,1210,11,127.16,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:15",0,"05/20/2018 16:59:15",4733
+43,4731,1210,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:15",0,"05/20/2018 16:59:15",4731
+43,4735,1211,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:20",0,"05/20/2018 16:59:20",4735
+43,4736,1211,11,122.15,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:20",0,"05/20/2018 16:59:20",4736
+43,4734,1211,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:20",0,"05/20/2018 16:59:20",4734
+43,4738,1212,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:27",0,"05/20/2018 16:59:27",4738
+43,4739,1212,11,127.31,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:27",0,"05/20/2018 16:59:27",4739
+43,4737,1212,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:27",0,"05/20/2018 16:59:27",4737
+43,4741,1213,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:34",0,"05/20/2018 16:59:34",4741
+43,4742,1213,11,125.42,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:34",0,"05/20/2018 16:59:34",4742
+43,4740,1213,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:34",0,"05/20/2018 16:59:34",4740
+43,4744,1214,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:41",0,"05/20/2018 16:59:41",4744
+43,4745,1214,11,145.36,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:41",0,"05/20/2018 16:59:41",4745
+43,4743,1214,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:41",0,"05/20/2018 16:59:41",4743
+43,4747,1215,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:48",0,"05/20/2018 16:59:48",4747
+43,4748,1215,11,127.56,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:48",0,"05/20/2018 16:59:48",4748
+43,4746,1215,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:48",0,"05/20/2018 16:59:48",4746
+43,4750,1216,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:59",0,"05/20/2018 16:59:59",4750
+43,4751,1216,11,133.88,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:59",0,"05/20/2018 16:59:59",4751
+43,4749,1216,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 16:59:59",0,"05/20/2018 16:59:59",4749
+43,4753,1217,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:08",0,"05/20/2018 17:00:08",4753
+43,4754,1217,11,150.91,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:08",0,"05/20/2018 17:00:08",4754
+43,4752,1217,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:08",0,"05/20/2018 17:00:08",4752
+43,4756,1218,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:17",0,"05/20/2018 17:00:17",4756
+43,4757,1218,11,130.75,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:17",0,"05/20/2018 17:00:17",4757
+43,4755,1218,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:16",0,"05/20/2018 17:00:16",4755
+43,4759,1219,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:23",0,"05/20/2018 17:00:23",4759
+43,4760,1219,11,126.34,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:23",0,"05/20/2018 17:00:23",4760
+43,4758,1219,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:23",0,"05/20/2018 17:00:23",4758
+43,4762,1220,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:30",0,"05/20/2018 17:00:30",4762
+43,4763,1220,11,109.87,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:30",0,"05/20/2018 17:00:30",4763
+43,4761,1220,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:30",0,"05/20/2018 17:00:30",4761
+43,4765,1221,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:36",0,"05/20/2018 17:00:36",4765
+43,4766,1221,11,119.89,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:36",0,"05/20/2018 17:00:36",4766
+43,4764,1221,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:36",0,"05/20/2018 17:00:36",4764
+43,4768,1222,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:45",0,"05/20/2018 17:00:45",4768
+43,4769,1222,11,118.28,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:45",0,"05/20/2018 17:00:45",4769
+43,4767,1222,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:45",0,"05/20/2018 17:00:45",4767
+43,4771,1223,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:52",0,"05/20/2018 17:00:52",4771
+43,4772,1223,11,120.80,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:52",0,"05/20/2018 17:00:52",4772
+43,4770,1223,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:00:52",0,"05/20/2018 17:00:52",4770
+43,4774,1224,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:00",0,"05/20/2018 17:01:00",4774
+43,4775,1224,11,153.93,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:00",0,"05/20/2018 17:01:00",4775
+43,4773,1224,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:00",0,"05/20/2018 17:01:00",4773
+43,4777,1225,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:08",0,"05/20/2018 17:01:08",4777
+43,4778,1225,11,141.89,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:08",0,"05/20/2018 17:01:08",4778
+43,4776,1225,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:08",0,"05/20/2018 17:01:08",4776
+43,4780,1226,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:23",0,"05/20/2018 17:01:23",4780
+43,4781,1226,11,140.68,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:23",0,"05/20/2018 17:01:23",4781
+43,4779,1226,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:23",0,"05/20/2018 17:01:23",4779
+43,4783,1227,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:32",0,"05/20/2018 17:01:32",4783
+43,4784,1227,11,144.45,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:32",0,"05/20/2018 17:01:32",4784
+43,4782,1227,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:32",0,"05/20/2018 17:01:32",4782
+43,4786,1228,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:41",0,"05/20/2018 17:01:41",4786
+43,4787,1228,11,143.12,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:41",0,"05/20/2018 17:01:41",4787
+43,4785,1228,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:41",0,"05/20/2018 17:01:41",4785
+43,4789,1229,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:47",0,"05/20/2018 17:01:47",4789
+43,4790,1229,11,166.94,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:47",0,"05/20/2018 17:01:47",4790
+43,4788,1229,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:47",0,"05/20/2018 17:01:47",4788
+43,4792,1230,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:53",0,"05/20/2018 17:01:53",4792
+43,4793,1230,11,159.50,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:53",0,"05/20/2018 17:01:53",4793
+43,4791,1230,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:53",0,"05/20/2018 17:01:53",4791
+43,4795,1231,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:58",0,"05/20/2018 17:01:58",4795
+43,4796,1231,11,150.39,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:58",0,"05/20/2018 17:01:58",4796
+43,4794,1231,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:01:58",0,"05/20/2018 17:01:58",4794
+43,4798,1232,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:03",0,"05/20/2018 17:02:03",4798
+43,4799,1232,11,146.63,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:03",0,"05/20/2018 17:02:03",4799
+43,4797,1232,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:03",0,"05/20/2018 17:02:03",4797
+43,4801,1233,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:08",0,"05/20/2018 17:02:08",4801
+43,4802,1233,11,139.33,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:08",0,"05/20/2018 17:02:08",4802
+43,4800,1233,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:08",0,"05/20/2018 17:02:08",4800
+43,4804,1234,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:14",0,"05/20/2018 17:02:14",4804
+43,4805,1234,11,142.85,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:15",0,"05/20/2018 17:02:15",4805
+43,4803,1234,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:14",0,"05/20/2018 17:02:14",4803
+43,4807,1235,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:20",0,"05/20/2018 17:02:20",4807
+43,4808,1235,11,143.73,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:20",0,"05/20/2018 17:02:20",4808
+43,4806,1235,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:20",0,"05/20/2018 17:02:20",4806
+43,4810,1236,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:25",0,"05/20/2018 17:02:25",4810
+43,4811,1236,11,157.43,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:25",0,"05/20/2018 17:02:25",4811
+43,4809,1236,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:25",0,"05/20/2018 17:02:25",4809
+43,4813,1237,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:29",0,"05/20/2018 17:02:29",4813
+43,4814,1237,11,146.78,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:29",0,"05/20/2018 17:02:29",4814
+43,4812,1237,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:29",0,"05/20/2018 17:02:29",4812
+43,4816,1238,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:35",0,"05/20/2018 17:02:35",4816
+43,4817,1238,11,147.14,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:35",0,"05/20/2018 17:02:35",4817
+43,4815,1238,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:35",0,"05/20/2018 17:02:35",4815
+43,4819,1239,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:40",0,"05/20/2018 17:02:40",4819
+43,4820,1239,11,144.16,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:40",0,"05/20/2018 17:02:40",4820
+43,4818,1239,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:40",0,"05/20/2018 17:02:40",4818
+43,4822,1240,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:45",0,"05/20/2018 17:02:45",4822
+43,4823,1240,11,164.68,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:45",0,"05/20/2018 17:02:45",4823
+43,4821,1240,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:45",0,"05/20/2018 17:02:45",4821
+43,4825,1241,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:49",0,"05/20/2018 17:02:49",4825
+43,4826,1241,11,148.93,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:49",0,"05/20/2018 17:02:49",4826
+43,4824,1241,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:02:49",0,"05/20/2018 17:02:49",4824
+43,4828,1242,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:02",0,"05/20/2018 17:03:02",4828
+43,4829,1242,11,124.70,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:02",0,"05/20/2018 17:03:02",4829
+43,4827,1242,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:02",0,"05/20/2018 17:03:02",4827
+43,4831,1243,5,4,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, many scratches, very old shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:14",0,"05/20/2018 17:03:14",4831
+43,4832,1243,11,154.69,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:14",0,"05/20/2018 17:03:14",4832
+43,4830,1243,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:14",0,"05/20/2018 17:03:14",4830
+43,4834,1244,5,4,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, many scratches, very old shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:21",0,"05/20/2018 17:03:21",4834
+43,4835,1244,11,171.18,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:21",0,"05/20/2018 17:03:21",4835
+43,4833,1244,14,1,,"SEX","Sex",1,"CODE","Male","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:21",0,"05/20/2018 17:03:21",4833
+43,4837,1245,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:41",0,"05/20/2018 17:03:41",4837
+43,4838,1245,6,0,,"CRAB_EGG_COLOR","Egg Color",1,"CODE","No eggs","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:41",0,"05/20/2018 17:03:41",4838
+43,4839,1245,7,0,,"CRAB_EGG_CONDITION","Egg Condition",1,"CODE","No eggs","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:41",0,"05/20/2018 17:03:41",4839
+43,4840,1245,8,0,,"CRAB_EGG_CLUTCH_SIZE","Clutch Size",1,"CODE","Immature","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:41",0,"05/20/2018 17:03:41",4840
+43,4841,1245,11,97.94,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:41",0,"05/20/2018 17:03:41",4841
+43,4836,1245,14,2,,"SEX","Sex",1,"CODE","Female","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:41",0,"05/20/2018 17:03:41",4836
+43,4843,1246,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:47",0,"05/20/2018 17:03:47",4843
+43,4844,1246,6,0,,"CRAB_EGG_COLOR","Egg Color",1,"CODE","No eggs","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:47",0,"05/20/2018 17:03:47",4844
+43,4845,1246,7,0,,"CRAB_EGG_CONDITION","Egg Condition",1,"CODE","No eggs","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:47",0,"05/20/2018 17:03:47",4845
+43,4846,1246,8,0,,"CRAB_EGG_CLUTCH_SIZE","Clutch Size",1,"CODE","Immature","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:47",0,"05/20/2018 17:03:47",4846
+43,4847,1246,11,93.55,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:47",0,"05/20/2018 17:03:47",4847
+43,4842,1246,14,2,,"SEX","Sex",1,"CODE","Female","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:47",0,"05/20/2018 17:03:47",4842
+43,4849,1247,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:51",0,"05/20/2018 17:03:51",4849
+43,4850,1247,6,0,,"CRAB_EGG_COLOR","Egg Color",1,"CODE","No eggs","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:51",0,"05/20/2018 17:03:51",4850
+43,4851,1247,7,0,,"CRAB_EGG_CONDITION","Egg Condition",1,"CODE","No eggs","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:51",0,"05/20/2018 17:03:51",4851
+43,4852,1247,8,0,,"CRAB_EGG_CLUTCH_SIZE","Clutch Size",1,"CODE","Immature","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:51",0,"05/20/2018 17:03:51",4852
+43,4853,1247,11,86.73,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:51",0,"05/20/2018 17:03:51",4853
+43,4848,1247,14,2,,"SEX","Sex",1,"CODE","Female","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:03:51",0,"05/20/2018 17:03:51",4848
+43,4855,1248,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:04:17",0,"05/20/2018 17:04:17",4855
+43,4856,1248,6,2,,"CRAB_EGG_COLOR","Egg Color",1,"CODE","Purple","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:04:17",0,"05/20/2018 17:04:17",4856
+43,4857,1248,7,1,,"CRAB_EGG_CONDITION","Egg Condition",1,"CODE","Uneyed eggs","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:04:17",0,"05/20/2018 17:04:17",4857
+43,4858,1248,8,5,,"CRAB_EGG_CLUTCH_SIZE","Clutch Size",1,"CODE","3/4 full","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:04:17",0,"05/20/2018 17:04:17",4858
+43,4859,1248,11,100.16,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:04:17",0,"05/20/2018 17:04:17",4859
+43,4854,1248,14,2,,"SEX","Sex",1,"CODE","Female","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:04:17",0,"05/20/2018 17:04:17",4854
+43,4861,1249,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:04:21",0,"05/20/2018 17:04:21",4861
+43,4862,1249,6,2,,"CRAB_EGG_COLOR","Egg Color",1,"CODE","Purple","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:04:21",0,"05/20/2018 17:04:21",4862
+43,4863,1249,7,1,,"CRAB_EGG_CONDITION","Egg Condition",1,"CODE","Uneyed eggs","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:04:21",0,"05/20/2018 17:04:21",4863
+43,4864,1249,8,5,,"CRAB_EGG_CLUTCH_SIZE","Clutch Size",1,"CODE","3/4 full","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:04:21",0,"05/20/2018 17:04:21",4864
+43,4865,1249,11,100.06,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:04:21",0,"05/20/2018 17:04:21",4865
+43,4860,1249,14,2,,"SEX","Sex",1,"CODE","Female","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:04:21",0,"05/20/2018 17:04:21",4860
+43,4867,1250,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:17",0,"05/20/2018 17:05:17",4867
+43,4868,1250,6,2,,"CRAB_EGG_COLOR","Egg Color",1,"CODE","Purple","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:17",0,"05/20/2018 17:05:17",4868
+43,4869,1250,7,1,,"CRAB_EGG_CONDITION","Egg Condition",1,"CODE","Uneyed eggs","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:17",0,"05/20/2018 17:05:17",4869
+43,4870,1250,8,5,,"CRAB_EGG_CLUTCH_SIZE","Clutch Size",1,"CODE","3/4 full","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:17",0,"05/20/2018 17:05:17",4870
+43,4871,1250,11,113.39,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:17",0,"05/20/2018 17:05:17",4871
+43,4866,1250,14,2,,"SEX","Sex",1,"CODE","Female","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:17",0,"05/20/2018 17:05:17",4866
+43,4873,1251,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:21",0,"05/20/2018 17:05:21",4873
+43,4874,1251,6,2,,"CRAB_EGG_COLOR","Egg Color",1,"CODE","Purple","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:21",0,"05/20/2018 17:05:21",4874
+43,4875,1251,7,1,,"CRAB_EGG_CONDITION","Egg Condition",1,"CODE","Uneyed eggs","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:21",0,"05/20/2018 17:05:21",4875
+43,4876,1251,8,5,,"CRAB_EGG_CLUTCH_SIZE","Clutch Size",1,"CODE","3/4 full","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:21",0,"05/20/2018 17:05:21",4876
+43,4877,1251,11,110.96,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:21",0,"05/20/2018 17:05:21",4877
+43,4872,1251,14,2,,"SEX","Sex",1,"CODE","Female","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:21",0,"05/20/2018 17:05:21",4872
+43,4879,1252,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:25",0,"05/20/2018 17:05:25",4879
+43,4880,1252,6,2,,"CRAB_EGG_COLOR","Egg Color",1,"CODE","Purple","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:25",0,"05/20/2018 17:05:25",4880
+43,4881,1252,7,1,,"CRAB_EGG_CONDITION","Egg Condition",1,"CODE","Uneyed eggs","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:25",0,"05/20/2018 17:05:25",4881
+43,4882,1252,8,5,,"CRAB_EGG_CLUTCH_SIZE","Clutch Size",1,"CODE","3/4 full","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:25",0,"05/20/2018 17:05:25",4882
+43,4883,1252,11,109.97,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:25",0,"05/20/2018 17:05:25",4883
+43,4878,1252,14,2,,"SEX","Sex",1,"CODE","Female","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:25",0,"05/20/2018 17:05:25",4878
+43,4885,1253,5,2,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Firm to hard, clean","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:33",0,"05/20/2018 17:05:33",4885
+43,4886,1253,6,2,,"CRAB_EGG_COLOR","Egg Color",1,"CODE","Purple","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:33",0,"05/20/2018 17:05:33",4886
+43,4887,1253,7,1,,"CRAB_EGG_CONDITION","Egg Condition",1,"CODE","Uneyed eggs","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:33",0,"05/20/2018 17:05:33",4887
+43,4888,1253,8,4,,"CRAB_EGG_CLUTCH_SIZE","Clutch Size",1,"CODE","1/2 full","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:33",0,"05/20/2018 17:05:33",4888
+43,4889,1253,11,102.39,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:33",0,"05/20/2018 17:05:33",4889
+43,4884,1253,14,2,,"SEX","Sex",1,"CODE","Female","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:33",0,"05/20/2018 17:05:33",4884
+43,4891,1254,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:42",0,"05/20/2018 17:05:42",4891
+43,4892,1254,6,2,,"CRAB_EGG_COLOR","Egg Color",1,"CODE","Purple","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:42",0,"05/20/2018 17:05:42",4892
+43,4893,1254,7,2,,"CRAB_EGG_CONDITION","Egg Condition",1,"CODE","Eyed eggs","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:42",0,"05/20/2018 17:05:42",4893
+43,4894,1254,8,6,,"CRAB_EGG_CLUTCH_SIZE","Clutch Size",1,"CODE","Full","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:42",0,"05/20/2018 17:05:42",4894
+43,4895,1254,11,158.22,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:42",0,"05/20/2018 17:05:42",4895
+43,4890,1254,14,2,,"SEX","Sex",1,"CODE","Female","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:42",0,"05/20/2018 17:05:42",4890
+43,4897,1255,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:47",0,"05/20/2018 17:05:47",4897
+43,4898,1255,6,2,,"CRAB_EGG_COLOR","Egg Color",1,"CODE","Purple","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:47",0,"05/20/2018 17:05:47",4898
+43,4899,1255,7,2,,"CRAB_EGG_CONDITION","Egg Condition",1,"CODE","Eyed eggs","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:47",0,"05/20/2018 17:05:47",4899
+43,4900,1255,8,6,,"CRAB_EGG_CLUTCH_SIZE","Clutch Size",1,"CODE","Full","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:47",0,"05/20/2018 17:05:47",4900
+43,4901,1255,11,113.72,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:47",0,"05/20/2018 17:05:47",4901
+43,4896,1255,14,2,,"SEX","Sex",1,"CODE","Female","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:47",0,"05/20/2018 17:05:47",4896
+43,4903,1256,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:53",0,"05/20/2018 17:05:53",4903
+43,4904,1256,6,2,,"CRAB_EGG_COLOR","Egg Color",1,"CODE","Purple","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:53",0,"05/20/2018 17:05:53",4904
+43,4905,1256,7,2,,"CRAB_EGG_CONDITION","Egg Condition",1,"CODE","Eyed eggs","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:53",0,"05/20/2018 17:05:53",4905
+43,4906,1256,8,6,,"CRAB_EGG_CLUTCH_SIZE","Clutch Size",1,"CODE","Full","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:53",0,"05/20/2018 17:05:53",4906
+43,4907,1256,11,130.93,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:53",0,"05/20/2018 17:05:53",4907
+43,4902,1256,14,2,,"SEX","Sex",1,"CODE","Female","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:53",0,"05/20/2018 17:05:53",4902
+43,4909,1257,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:58",0,"05/20/2018 17:05:58",4909
+43,4910,1257,6,2,,"CRAB_EGG_COLOR","Egg Color",1,"CODE","Purple","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:58",0,"05/20/2018 17:05:58",4910
+43,4911,1257,7,2,,"CRAB_EGG_CONDITION","Egg Condition",1,"CODE","Eyed eggs","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:58",0,"05/20/2018 17:05:58",4911
+43,4912,1257,8,6,,"CRAB_EGG_CLUTCH_SIZE","Clutch Size",1,"CODE","Full","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:58",0,"05/20/2018 17:05:58",4912
+43,4913,1257,11,111.34,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:58",0,"05/20/2018 17:05:58",4913
+43,4908,1257,14,2,,"SEX","Sex",1,"CODE","Female","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:05:58",0,"05/20/2018 17:05:58",4908
+43,4915,1258,5,3,,"CRAB_SHELL_CONDITION","Shell Condition",1,"CODE","Hard, scratches, older shell","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:06:11",0,"05/20/2018 17:06:11",4915
+43,4916,1258,6,2,,"CRAB_EGG_COLOR","Egg Color",1,"CODE","Purple","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:06:11",0,"05/20/2018 17:06:11",4916
+43,4917,1258,7,2,,"CRAB_EGG_CONDITION","Egg Condition",1,"CODE","Eyed eggs","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:06:11",0,"05/20/2018 17:06:11",4917
+43,4918,1258,8,5,,"CRAB_EGG_CLUTCH_SIZE","Clutch Size",1,"CODE","3/4 full","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:06:11",0,"05/20/2018 17:06:11",4918
+43,4919,1258,11,93.07,"MM","CARAPACE_LENGTH","Carapace Length",5,"FLOAT",,"2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:06:11",0,"05/20/2018 17:06:11",4919
+43,4914,1258,14,2,,"SEX","Sex",1,"CODE","Female","2cc8796ee90f5a1e","Zacher, Leah","05/20/2018 17:06:11",0,"05/20/2018 17:06:11",4914
