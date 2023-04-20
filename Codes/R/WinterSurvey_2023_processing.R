@@ -683,25 +683,6 @@
                          plot.title = element_text(face = "bold", size = 15),
                          plot.subtitle = element_text(size = 12))) -> BBRKC.maps
     
-    
-    BBRKC.maps[[1]] -> tag
-    
-    tt <- as.data.frame(cbind(tagging_mapdat, st_coordinates(tagging_mapdat)))
-    
-    tag +
-      geom_sf(data = filter(tagging_mapdat, MAT_SEX == "Mature male"),
-              mapping = aes(shape = as.factor(shp)), size= 4, stat="identity", position="identity") +
-      theme(axis.title = element_blank(),
-            axis.text = element_text(size = 10),
-            legend.text = element_text(size = 10),
-            legend.title = element_text(size = 10),
-            legend.position = "bottom",
-            legend.direction = "horizontal",
-            plot.title = element_text(face = "bold", size = 15),
-            plot.subtitle = element_text(size = 12))
-    
-    
-    
     # Plot with tagging
     mat_sex_combos %>%
       purrr::map(~ggplot() +
