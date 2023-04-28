@@ -46,8 +46,14 @@
         right_join(., catch %>% select(HAUL, HAUL_ID, RECORDING_DEVICE))
       
   # Read in potlifts and tagging data
-      potlifts <- list.files("./Data/", pattern = "POTLIFTS", ignore.case = TRUE) %>% #MAY NEED TO CHANGE
-        purrr::map_df(~read.csv(paste0("./Data/", .x))) %>%
+      SB_potlifts <- read.csv("./Data/SB_POTLIFTS .csv") #Summer Bay
+      
+      SS_potlifts <- read.csv("./Data/SS_POTLIFTS.csv") %>%
+                      dplyr::filter(SPN %in% 1:339) %>% #Hardcoding SS data to removing hotspot tagging sites and Gear code 42
+                      dplyr::mutate(SPN = as.integer(SPN), GEAR_CODE = ifelse(GEAR_CODE == 42, 42, "")) %>%
+                      dplyr::select(!c(ADFG.Logger, Cory.temp, X.1, X.2, X.3, X)) # Silver Spray
+      
+      potlifts <- rbind(SB_potlifts, SS_potlifts) %>%
         filter(DATE_HAUL != "", is.na(VESSEL) == "FALSE" & is.na(GEAR_CODE) == TRUE | GEAR_CODE == "") %>% 
         mutate(BUOY = paste0("X", BUOY)) 
 
