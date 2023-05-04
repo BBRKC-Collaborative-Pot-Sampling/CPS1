@@ -750,3 +750,165 @@
     ggsave(plot = BBRKC.maps[[5]], "./Figures/BBRKC_legalmale.png", height=7, width=10, units="in")
     ggsave(plot = BBRKC.maps[[6]], "./Figures/BBRKC_sublegalmale.png", height=7, width=10, units="in")
     
+# BYCATCH -----------------------------------------------------------------------
+  # Process data
+  bycatch <- rbind(read.csv("./Data/SS_BYCATCH.csv") %>%
+                              select(!c(RKC.Male.in.NonSurveyPots, RKC.Female.in.NonSurvey.Pots,
+                                        Pollock, Starry.Flounder)), 
+                   read.csv("./Data/SB_BYCATCH .csv")) %>%
+              mutate(SPN = as.numeric(as.character(SPN))) %>%
+              filter(is.na(SPN) == FALSE, !(VESSEL == 162 & SPN %in% 300:311)) %>%
+              right_join(potlifts %>% select(c(VESSEL, SPN, LON_DD, LAT_DD)), .) %>%
+              replace(., is.na(.), 0) %>%
+          sf::st_as_sf(coords = c(x = "LON_DD", y = "LAT_DD"), crs = sf::st_crs(4326)) %>%
+          sf::st_transform(crs = map.crs)
+    
+    # Make map labels
+    bc_labs <- data.frame(labs = c("Pacific Cod", "Yellowfin Sole"),
+                          name = c("PacificCod", "YellowfinSole"))
+
+    #Plot YFS
+    ggplot() +
+      geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+      geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+      geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+      geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+      geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+      geom_sf(data = bycatch,
+              mapping = aes(size=YellowfinSole, fill = YellowfinSole, shape = YellowfinSole == 0), 
+              alpha = 0.5, colour = "black")+
+      scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none") +
+      scale_color_manual(values = c("black", "red"), 
+                         labels = c("EBS Summer Survey Boundary", "Red King Crab Savings Area"),
+                         name = "") +
+      scale_size_continuous(range = c(2, 10))+ 
+      scale_fill_gradientn(colors = c("gray", rev(pal[5:length(pal)]))) +
+      scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(-165, -160), "°W"))+
+      scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
+      labs(title = "2023 BBRKC Winter/Spring Pot Survey", subtitle = paste(filter(bc_labs, name == "YellowfinSole")$lab))+
+      guides(size = guide_legend(title.position = "top", title = "COUNT", nrow = 2, override.aes = list(shape = c(4, rep(21, 4)))),
+             fill = guide_legend(title = "COUNT"),
+             color = guide_legend(nrow = 2))+
+      coord_sf(xlim = plot.boundary$x,
+               ylim = plot.boundary$y) +
+      geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                           x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                     sf::st_transform(crs = map.crs),
+                   mapping = aes(label = lab))+
+      theme_bw() +
+      theme(axis.title = element_blank(),
+            axis.text = element_text(size = 10),
+            legend.text = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(face = "bold", size = 15),
+            plot.subtitle = element_text(size = 12)) -> yfs_map
+    
+    # Plot Pcod
+    ggplot() +
+      geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+      geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+      geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+      geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+      geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+      geom_sf(data = bycatch,
+              mapping = aes(size=PacificCod, fill = PacificCod, shape = PacificCod == 0), 
+              alpha = 0.5, colour = "black")+
+      scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none") +
+      scale_color_manual(values = c("black", "red"), 
+                         labels = c("EBS Summer Survey Boundary", "Red King Crab Savings Area"),
+                         name = "") +
+      scale_size_continuous(range = c(2, 10))+ 
+      scale_fill_gradientn(colors = c("gray", rev(pal[5:length(pal)]))) +
+      scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(-165, -160), "°W"))+
+      scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
+      labs(title = "2023 BBRKC Winter/Spring Pot Survey", subtitle = paste(filter(bc_labs, name == "PacificCod")$lab))+
+      guides(size = guide_legend(title.position = "top",title = "COUNT", nrow = 2, override.aes = list(shape = c(4, rep(21, 3)))),
+             fill = guide_legend(title = "COUNT"),
+             color = guide_legend(nrow = ))+
+      coord_sf(xlim = plot.boundary$x,
+               ylim = plot.boundary$y) +
+      geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                           x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                     sf::st_transform(crs = map.crs),
+                   mapping = aes(label = lab))+
+      theme_bw() +
+      theme(axis.title = element_blank(),
+            axis.text = element_text(size = 10),
+            legend.text = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(face = "bold", size = 15),
+            plot.subtitle = element_text(size = 12)) -> pcod_map
+    
+    # Save figures
+    ggsave(plot = yfs_map, "./Figures/yfs_map.png", height=7, width=10, units="in")
+    ggsave(plot = pcod_map, "./Figures/pcod_map.png", height=7, width=10, units="in")
+    
+# CRAB COUNTS BY ZONE --------------------------------------------------------------------
+  # Pull out column letters and column numbers into separate columns  
+    pot_cpue %>%
+      mutate(COL = substr(POT_ID, 1, 1), COL_NUM = substr(POT_ID, 2, 3)) -> pot_cpue_cols
+    
+  # East of RKCSA
+    pot_cpue_cols %>%
+      filter((COL == "F" & COL_NUM %in% 1:48)|
+             (COL == "G" & COL_NUM %in% 1:56)|
+             (COL == "H" & COL_NUM %in% 1:54)|
+             (COL == "I" & COL_NUM %in% 1:54)|
+             (COL == "J" & COL_NUM %in% 1:42)|
+             (COL == "K" & COL_NUM %in% 1:37)) %>%
+      group_by(MAT_SEX) %>%
+      reframe(SUM_COUNT = sum(COUNT)) -> RKCSA_E
+    
+  # All RKCSA
+    pot_cpue_cols %>%
+        filter((COL == "B" & COL_NUM %in% 26:55)|
+               (COL == "C" & COL_NUM %in% 26:55)|
+               (COL == "D" & COL_NUM %in% 26:55)|
+               (COL == "E" & COL_NUM %in% 26:55)|
+               (COL == "F" & COL_NUM %in% 49:55)) %>%
+      group_by(MAT_SEX) %>%
+      reframe(SUM_COUNT = sum(COUNT)) -> RKCSA_all
+  
+  # RKCSA subarea
+    pot_cpue_cols %>%
+        filter((COL == "B" & COL_NUM %in% 51:55)|
+               (COL == "C" & COL_NUM %in% 51:55)|
+               (COL == "D" & COL_NUM %in% 51:55)|
+               (COL == "E" & COL_NUM %in% 51:55)|
+               (COL == "F" & COL_NUM %in% 51:55)) %>%
+      group_by(MAT_SEX) %>%
+      reframe(SUM_COUNT = sum(COUNT)) -> RKCSA_sub
+  
+  # South of RKCSA
+    pot_cpue_cols %>%
+        filter((COL == "A" & COL_NUM %in% 56:85)|
+               (COL == "B" & COL_NUM %in% 56:83)|
+               (COL == "C" & COL_NUM %in% 56:81)|
+               (COL == "D" & COL_NUM %in% 56:74)|
+               (COL == "E" & COL_NUM %in% 56:67)|
+               (COL == "F" & COL_NUM %in% 56:60)) %>%
+      group_by(MAT_SEX) %>%
+      reframe(SUM_COUNT = sum(COUNT)) -> RKCSA_S
+    
+  # West of RKCSA
+    pot_cpue_cols %>%
+      filter((COL == "A" & COL_NUM %in% 26:55)) %>%
+      group_by(MAT_SEX) %>%
+      reframe(SUM_COUNT = sum(COUNT)) -> RKCSA_W
+    
+  # North of RKCSA
+    pot_cpue_cols %>%
+        filter((COL == "A" & COL_NUM %in% 1:25)|
+               (COL == "B" & COL_NUM %in% 1:25)|
+               (COL == "C" & COL_NUM %in% 1:25)|
+               (COL == "D" & COL_NUM %in% 1:25)|
+               (COL == "E" & COL_NUM %in% 1:25)) %>%
+      group_by(MAT_SEX) %>%
+      reframe(SUM_COUNT = sum(COUNT)) -> RKCSA_N
+    
