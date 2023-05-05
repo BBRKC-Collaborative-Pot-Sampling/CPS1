@@ -783,7 +783,7 @@
                          name = "") +
       scale_size_continuous(range = c(2, 10))+ 
       scale_fill_gradientn(colors = c("gray", rev(pal[5:length(pal)]))) +
-      scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(-165, -160), "°W"))+
+      scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
       scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
       labs(title = "2023 BBRKC Winter/Spring Pot Survey", subtitle = paste(filter(bc_labs, name == "YellowfinSole")$lab))+
       guides(size = guide_legend(title.position = "top", title = "COUNT", nrow = 2, override.aes = list(shape = c(4, rep(21, 4)))),
@@ -822,7 +822,7 @@
                          name = "") +
       scale_size_continuous(range = c(2, 10))+ 
       scale_fill_gradientn(colors = c("gray", rev(pal[5:length(pal)]))) +
-      scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(-165, -160), "°W"))+
+      scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
       scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
       labs(title = "2023 BBRKC Winter/Spring Pot Survey", subtitle = paste(filter(bc_labs, name == "PacificCod")$lab))+
       guides(size = guide_legend(title.position = "top",title = "COUNT", nrow = 2, override.aes = list(shape = c(4, rep(21, 3)))),
