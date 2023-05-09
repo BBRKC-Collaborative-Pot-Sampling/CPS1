@@ -912,3 +912,55 @@
       group_by(MAT_SEX) %>%
       reframe(SUM_COUNT = sum(COUNT)) -> RKCSA_N
     
+
+# ALL CRAB MAP ----------------------------------------------------------------------
+    pot_cpue %>%
+      group_by(SPN, LAT_DD, LON_DD) %>%
+      reframe(COUNT = sum(COUNT)) %>%
+      sf::st_as_sf(coords = c(x = "LON_DD", y = "LAT_DD"), crs = sf::st_crs(4326)) %>%
+      sf::st_transform(crs = map.crs) -> pot_cpue_mapdat
+    
+    ggplot() +
+      geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+      geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+      geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+      geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+      geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+      geom_sf(data = pot_cpue_mapdat,
+              mapping = aes(size=COUNT, fill = COUNT, shape = COUNT == 0), alpha = 0.5, colour = "black")+
+      scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none")+
+      scale_color_manual(values = c("black", "red"), 
+                         labels = c("EBS Summer Survey Boundary", "Red King Crab Savings Area"),
+                         name = "") +
+      scale_size_continuous(range = c(2, 10), limits = c(0, max(pot_cpue_mapdat$COUNT)), 
+                            breaks =seq(0, max(pot_cpue_mapdat$COUNT), by = 50))+ 
+      scale_fill_gradientn(breaks = seq(0, max(pot_cpue_mapdat$COUNT), by = 50),
+                           limits = c(0, max(pot_cpue_mapdat$COUNT)), 
+                           colors = c("gray", rev(pal[5:length(pal)])))+
+      scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
+      scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
+      labs(title = "2023 BBRKC Winter/Spring Pot Survey", subtitle = "All crab")+
+      guides(size = guide_legend(title.position = "top", nrow = 2, override.aes = list(shape = c(4, rep(21, 6)))),
+             fill = guide_legend(),
+             color = guide_legend(nrow = 2))+
+      coord_sf(xlim = plot.boundary$x,
+               ylim = plot.boundary$y) +
+      geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                           x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                     sf::st_transform(crs = map.crs),
+                   mapping = aes(label = lab))+
+      theme_bw() +
+      theme(axis.title = element_blank(),
+            axis.text = element_text(size = 10),
+            legend.text = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(face = "bold", size = 15),
+            plot.subtitle = element_text(size = 12)) -> all_crab_map
+    
+    ggsave(plot = all_crab_map, "./Figures/all_crab_map.png", height=7, width=10, units="in")
+    
+    
+    
