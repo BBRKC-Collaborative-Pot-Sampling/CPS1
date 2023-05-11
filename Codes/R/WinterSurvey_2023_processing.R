@@ -149,31 +149,38 @@
         distinct() %>%
         dplyr::rename(SPN = HAUL) %>%
         dplyr::right_join(potlifts, ., by = c("VESSEL", "SPN"), multiple = "all") %>%
+        dplyr::mutate(VESSEL = ifelse(VESSEL == 162, "Summer Bay", "Silver Spray")) %>%
         dplyr::filter(c(is.na(LAT_DD) & is.na(LON_DD) & is.na(SPN)) == FALSE) %>% # bad/gear testing hauls will have NA
         dplyr::select(CRUISE, VESSEL, SPN, POT_ID, BUOY, LAT_DD, LON_DD, DATE_HAUL, TIME_HAUL, SOAK_TIME, DEPTH_F,
                       SPECIES_CODE, SEX, LENGTH, WIDTH, SAMPLING_FACTOR, SHELL_CONDITION, EGG_COLOR, EGG_CONDITION, 
                       CLUTCH_SIZE, WEIGHT, DISEASE_CODE, DISEASE_DORSAL, DISEASE_VENTRAL, DISEASE_LEGS,  
-                      CHELA_HEIGHT, MERUS_LENGTH, COMMENTS) -> specimen_table
+                      CHELA_HEIGHT, MERUS_LENGTH, COMMENTS, NOTES.x) -> specimen_table
       
   # Changing mature barren females to immature for Summer Bay (determined all females
   # coded as mature barren were immature after seeing more immature females in the 
   # last couple of strings in the survey, comparing to mature females, Silver Spray data
   # (the other research vessel), and various other references)
       specimen_table %>%
-        dplyr::mutate(CLUTCH_SIZE = ifelse((VESSEL == 162 & SEX == 2 & EGG_CONDITION == 0 
+        dplyr::mutate(CLUTCH_SIZE = ifelse((VESSEL == "Summer Bay" & SEX == 2 & EGG_CONDITION == 0 
                                      & EGG_COLOR == 0), 0, CLUTCH_SIZE)) -> specimen_table
       
   # Process specimen table for Oracle, save
       specimen_table %>%
-        dplyr::select(!c(LAT_DD, LON_DD, DATE_HAUL, TIME_HAUL, SOAK_TIME, DEPTH_F)) %>%
+        dplyr::select(!c(LAT_DD, LON_DD, DATE_HAUL, TIME_HAUL, SOAK_TIME, DEPTH_F, NOTES.x)) %>%
         dplyr::rename(HAUL = POT_ID, STATION = BUOY) %>% # MAY CHANGE BUOY TO ACTUAL STATION
         write.csv("./DataForOracle/Processed_Specimen_Data.csv")
+      
+  # Process specimen table with all haul data, save
+      specimen_table %>% 
+        rename(NOTES = NOTES.x) %>%
+        write.csv("./Output/Processed_Specimen_Data.csv")
       
   # Update catch summary table with new crab #s from sampling factor
       specimen_table %>%
         dplyr::group_by(CRUISE, VESSEL, SPN, POT_ID, SPECIES_CODE) %>%
         dplyr::reframe(NUMBER_CRAB = sum(SAMPLING_FACTOR)) %>%
-        dplyr::right_join(catch %>% dplyr::rename(SPN = HAUL, N_ENTRIES = NUMBER_CRAB)) %>%
+        dplyr::right_join(catch %>% dplyr::rename(SPN = HAUL, N_ENTRIES = NUMBER_CRAB) %>%
+                            dplyr::mutate(VESSEL = ifelse(VESSEL == 162, "Summer Bay", "Silver Spray"))) %>%
         dplyr::select(CRUISE, VESSEL, SPN, POT_ID, SPECIES_CODE, NUMBER_CRAB, N_ENTRIES) %>%
         na.omit() -> catch_summary # bad/gear testing potlifts will have NA for SPN and # crab
       
@@ -201,14 +208,17 @@
       rbind(maturity, legal) -> mat_spec #bind
       
       
-  # Calculate COUNT and CPUE per pot 
+  # Calculate COUNT and CATCH_PER_HOUR per pot, CHANGE VESSEL TO ACTUAL NAME
       mat_spec %>%
-        dplyr::mutate(CPUE = SAMPLING_FACTOR/SOAK_TIME) %>% 
+        dplyr::mutate(CATCH_PER_HOUR = SAMPLING_FACTOR/SOAK_TIME) %>% 
         dplyr::group_by(VESSEL, SPN, POT_ID, BUOY, LAT_DD, LON_DD, MAT_SEX) %>%
         dplyr::reframe(COUNT = sum(SAMPLING_FACTOR),
-                         CPUE = sum(CPUE)) -> positive_pot_cpue
+                         CATCH_PER_HOUR = sum(CATCH_PER_HOUR)) -> positive_pot_cpue
       
-      
+    # Change vessel #s to names in potlifts file
+      potlifts %>%
+        dplyr::mutate(VESSEL = ifelse(VESSEL == 162, "Summer Bay", "Silver Spray")) -> potlifts
+    
   # Expand potlifts file to all mat-sex categories and potlifts, join to positive catch file to get zeros 
       mat_sex_combos <- c("Mature male", "Immature male", "Mature female", "Immature female", "Legal male", "Sublegal male")
       
@@ -217,10 +227,10 @@
                                potlifts)) %>%
         replace_na(list(COUNT = 0, CPUE = 0)) %>%
         dplyr::select(VESSEL, SPN, POT_ID, BUOY, LAT_DD, LON_DD, DATE_SET, TIME_SET, DATE_HAUL, TIME_HAUL, SOAK_TIME,
-                      MAT_SEX, COUNT, CPUE)-> pot_cpue
+                      MAT_SEX, COUNT, CATCH_PER_HOUR)-> pot_cpue
       
   # Save csv
-      write.csv(pot_cpue, "./Output/W2023_potcpue.csv")
+      write.csv(pot_cpue, "./Output/W2023_potcatch.csv")
       
   # Transform catch and tagging data to correct crs
       pot_cpue %>%
@@ -328,7 +338,7 @@
         
         
         # "2) Does the vessel # match the vessels utilized in the survey?"
-        if(FALSE %in% (unique(specimen_table$VESSEL) %in% c(162, 94)) == TRUE){
+        if(FALSE %in% (unique(specimen_table$VESSEL) %in% c("Summer Bay", "Silver Spray")) == TRUE){
           print("ERROR: vessel numbers entered do not match survey vessels")
         }
         
@@ -652,9 +662,6 @@
                    geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
                    geom_sf(data = filter(pot_cpue_mapdat, MAT_SEX == .x),
                            mapping = aes(size=COUNT, fill = COUNT, shape = COUNT == 0), alpha = 0.5, colour = "black")+
-                   #scale_shape_manual(values = c(0, 2, 15, 17), 
-                   #labels = c("Silver Spray (n=1)", "Summer Bay (n=1)", "Silver Spray (n>1)", "Summer Bay (n>1)"),
-                   #drop = FALSE)+
                    scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none")+
                    scale_color_manual(values = c("black", "red"), 
                                       labels = c("EBS Summer Survey Boundary", "Red King Crab Savings Area"),
@@ -664,8 +671,6 @@
                    scale_fill_gradientn(breaks = seq(0, max(pot_cpue_mapdat$COUNT), by = 25),
                                         limits = c(0, max(pot_cpue_mapdat$COUNT)), 
                                         colors = c("gray", rev(pal[5:length(pal)])))+
-                   #scale_x_continuous(breaks = breaks.x, labels = paste0(breaks.x, "°W")) + 
-                   #scale_y_continuous(breaks = breaks.y, labels = paste0(breaks.y, "°N")) +
                    scale_x_continuous(breaks = map_layers$lon.breaks)+
                    scale_y_continuous(breaks = map_layers$lat.breaks)+
                    labs(title = "2023 BBRKC Winter/Spring Pot Survey", subtitle = paste(filter(mat_labs, MAT_SEX == .x)$lab))+
@@ -701,23 +706,18 @@
                            mapping = aes(size=COUNT, fill = COUNT, shape = COUNT == 0), alpha = 0.5, colour = "black")+
                    geom_sf(data = filter(tagging_mapdat, MAT_SEX == .x),
                            mapping = aes(shape = as.factor(shp)), size= 4, stat="identity", position="identity")+
-        
                    scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21, "n=1" = 0, "n>1" = 15),
                                       labels = c("n>1", "n>1", "n>1", "n=1", "n>1"),
                                       breaks = c("n>1", "n>1", "n>1", "n=1", "n>1"))+
-                   #scale_shape_manual(values = shapes)+
                    scale_color_manual(values = c("black", "red"), 
                                       labels = c("EBS Summer Survey Boundary", "Red King Crab Savings Area"),
                                       name = "") +
                    scale_size_continuous(range = c(2, 10), limits = c(0, max(pot_cpue_mapdat$COUNT)))+ 
                    scale_fill_gradientn(limits = c(0, max(pot_cpue_mapdat$COUNT)), 
                                         colors = c("gray", rev(pal[5:length(pal)])))+
-                   #scale_x_continuous(breaks = breaks.x, labels = paste0(breaks.x, "°W")) + 
-                   #scale_y_continuous(breaks = breaks.y, labels = paste0(breaks.y, "°N")) +
                    scale_x_continuous(breaks = map_layers$lon.breaks)+
                    scale_y_continuous(breaks = map_layers$lat.breaks)+
                    labs(title = "2023 BBRKC Winter/Spring Pot Survey", subtitle = paste(filter(mat_labs, MAT_SEX == .x)$lab))+
-                   #ggtitle(paste("2023 BBRKC Winter/Spring Pot Survey", filter(mat_labs, MAT_SEX == .x)$lab)) +
                    guides(size = guide_legend(title.position = "top", nrow = 2, override.aes = list(shape = c(4, rep(21, 5)))), 
                           fill = guide_legend(), shape = guide_legend(title = "TAG RELEASE", title.position = "top", nrow =2),
                                                                       #,
@@ -963,4 +963,4 @@
     ggsave(plot = all_crab_map, "./Figures/all_crab_map.png", height=7, width=10, units="in")
     
     
-    
+# ADFG TEMPERATURE MAPS ------------------------------------------------------------------
