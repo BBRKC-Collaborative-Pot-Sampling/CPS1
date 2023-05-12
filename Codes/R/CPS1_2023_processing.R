@@ -17,6 +17,7 @@
   library(viridis)
   library(grid)
   library(shadowtext)
+  library(gstat)
 
 # LOAD DATA -----------------------------------------------------------------------------------------------------------------
   
@@ -173,7 +174,7 @@
   # Process specimen table with all haul data, save
       specimen_table %>% 
         rename(NOTES = NOTES.x) %>%
-        write.csv("./Output/Processed_Specimen_Data.csv")
+        write.csv("./Output/W2023_Processed_Specimen_Data.csv")
       
   # Update catch summary table with new crab #s from sampling factor
       specimen_table %>%
@@ -964,3 +965,119 @@
     
     
 # ADFG TEMPERATURE MAPS ------------------------------------------------------------------
+    
+    map_layers <- readRDS("./Data/akgfmaps_layers.rds")
+    map.crs <- "EPSG:3338"
+    
+    temp <- read.csv("./Data/2023_BBRKC_ALL_TEMPS.csv") %>%
+            filter(is.na(AveTemp) == FALSE) %>%
+            rename()
+    
+    # Make raster for interpolation
+    cell.resolution = 5000
+    plot.boundary.untrans <- data.frame(y = c(54.5, 58.5), 
+                                        x = c(-164.8, -159)) # plot boundary unprojected
+    
+    plot.boundary <- plot.boundary.untrans %>%
+      sf::st_as_sf(coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+      sf::st_transform(crs = map.crs) %>%
+      sf::st_coordinates() %>%
+      as.data.frame() %>%
+      dplyr::rename(x = X, y = Y) # plot boundary projected
+    
+    n_dim <- floor(abs(plot.boundary$x[1] - plot.boundary$x[2]))/cell.resolution
+    
+    sp_interp.raster <- raster::raster(xmn = plot.boundary$x[1], 
+                                       xmx = plot.boundary$x[2], 
+                                       ymn = plot.boundary$y[1], 
+                                       ymx = plot.boundary$y[2], 
+                                       nrow = n_dim, 
+                                       ncol = n_dim)
+    
+    raster::projection(sp_interp.raster) <- map.crs
+    
+    
+    sp_interp.raster <- raster::raster(st_as_sf(BB_strata), res = 2000)
+    
+    st_read(survey_gdb,layer="BristolBaySurveyStrata") %>%
+      st_transform(map.crs) -> BB_rast
+    
+    # Transform data for interpolation ----
+    in.crs <- "+proj=longlat +datum=NAD83"
+    sp_interp.df <- unique(temp)
+    sp::coordinates(sp_interp.df) <- c(x = "Longitude.x", y = "Latitude.x")
+    sp::proj4string(sp_interp.df) <- sp::CRS(in.crs)
+    sp_interp.df <- sp::spTransform(sp_interp.df, sp::CRS(map.crs))
+    
+    # Set up a new IDW for ordinary kriging ----
+    idw_vgm_fit <- gstat::gstat(formula = AveTemp ~ 1, 
+                                locations = sp_interp.df, 
+                                nmax = Inf)
+    
+    # Ordinary Kriging: Stein's Matern VGM----
+    ste.vgfit <- gstat::fit.variogram(variogram(idw_vgm_fit), 
+                                      vgm(c("Ste")))
+    
+    ste_fit <- gstat::gstat(formula = AveTemp ~ 1, 
+                            locations = sp_interp.df, 
+                            model = ste.vgfit, 
+                            nmax = Inf)
+    
+    ste.predict <- predict(ste_fit, as(sp_interp.raster, "SpatialGrid"))
+    
+    # write unmasked surfaces to raster, stacked by year
+    ste.predict %>%
+      raster::raster(.) %>%
+      mask(BB_rast) ->  temp_rast
+    
+    # extract interpolated data from raster to data frame
+    coords<-coordinates(temp_rast)
+    
+    temp_df<-na.omit(data.frame(coords, temperature = temp_rast@data@values))
+    
+    temp_breaks <- c(-Inf, seq(-1,4,1), Inf)
+    viridis_option <- "H" # viridis turbo palette
+    n_temp_breaks <- length(temp_breaks)-1
+    
+    ggplot() +
+      #ggplot2::geom_tile(data = temp_df, 
+                         #aes(x = x, 
+                             #y = y,
+                             #fill = cut(temperature, 
+                                        #breaks = temp_breaks))) +
+      geom_tile(data = temp_df, aes(x = x, y = y, fill = temperature))+
+      geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+      geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+      geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+      geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+      geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+      scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
+      scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
+      labs(title = "2023 BBRKC Winter/Spring Pot Survey", subtitle = "ADFG temperature")+
+      scale_color_manual(values = c("black", "red"), 
+                         labels = c("EBS Summer Survey Boundary", "Red King Crab Savings Area"),
+                         name = "") +
+      coord_sf(xlim = plot.boundary$x,
+               ylim = plot.boundary$y) +
+      #ggplot2::scale_fill_manual(name = "Temperature (?C)", values = viridis_pal(option = viridis_option)(n_temp_breaks),
+                                 #labels = c(expression(""<=-1), "-0.9-0", "0.1-1", "1.1-2", "2.1-3", "3.1-4",
+                                            #"4.1-5", "5.1-6", "6.1-7", "7.1-8", ">8.1"), drop = FALSE) +
+      scale_fill_viridis(name = "Temperature (°C)", option = "plasma")+
+      geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                           x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                     sf::st_transform(crs = map.crs),
+                   mapping = aes(label = lab))+
+      guides(color = guide_legend(nrow = 2)) +
+      theme_bw() +
+      theme(axis.title = element_blank(),
+            axis.text = element_text(size = 10),
+            legend.text = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(face = "bold", size = 15),
+            plot.subtitle = element_text(size = 12)) -> temp_map_continuous
+    
+    ggsave(plot = temp_map_continuous, "./Figures/adfg_tempcont.png", height=7, width=10, units="in")
+  
