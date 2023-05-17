@@ -4,6 +4,8 @@
   # 2) To run error checks on processed specimen and catch summaries
   # 3) To calculate and map cpue by pot and mat/sex category for BBRKC
 
+  # Author: Emily Ryznar, NOAA-AFSC
+
 # INSTALL PACKAGES ----------------------------------------------------------------------------------------------------------
   #install.packages(c("tidyverse", "gsubfn", "terra", "rgdal", "colorRamps", "sf", "viridis", "grid", "shadowtext",
 #                     "ggnewscale"))
@@ -959,7 +961,7 @@
     map_layers <- readRDS("./Data/akgfmaps_layers.rds")
     map.crs <- "EPSG:3338"
     
-    temp <- read.csv("./Data/2023_BBRKC_ALL_TEMPS_SAL.csv") %>%
+    temp <- read.csv("./Data/2023_BBRKC_ALL_TEMPS_SAL/2023_BBRKC_ALL_TEMPS_SAL.csv") %>%
       filter(is.na(AveTemp) == FALSE) %>%
       rename()
     
@@ -1031,10 +1033,7 @@
     n_temp_breaks <- length(temp_breaks)-1
     
     # Filter potlifts data by pots that had adfg temp loggers
-    potlifts %>%
-      mutate(NOTES = ifelse((VESSEL == "Silver Spray" & SPN == 44), paste("adfg ", NOTES), NOTES)) %>% #missing adfg note
-      filter(NOTES != "" & !grepl(" hotspot release", NOTES) & NOTES != "hotspot release") %>%
-      temp %>%
+    temp %>%
       sf::st_as_sf(coords = c(x = "Longitude_pot", y = "Latitude_pot"), crs = sf::st_crs(4326)) %>%
       sf::st_transform(crs = map.crs) -> temploggers
     
@@ -1470,7 +1469,7 @@
     
     ggsave(plot = all_crab.temp.highresbathy_map, "./Figures/all_crab.temp.highresbathy_map.png", height=7, width=10, units="in")
     
-  # Analysis with lat, lon, temp, and depth as explanatory variables by size/sex class with spatial error
+  # Regression analyses -----------------------------------------------------------------
     #Join environmental data with pot catch data, transform
     temp %>%
       rename(POT_ID = Pot_ID, VESSEL = Vessel) %>%
