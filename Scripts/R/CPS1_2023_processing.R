@@ -761,9 +761,91 @@
             plot.title = element_text(face = "bold", size = 15),
             plot.subtitle = element_text(size = 12)) -> pcod_map
     
+    # Plot Tanner 
+    ggplot() +
+      geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+      geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+      geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+      geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+      geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+      geom_sf(data = bycatch,
+              mapping = aes(size= (MaleTanner + FemaleTanner), fill = (MaleTanner+FemaleTanner), 
+                            shape = (MaleTanner+FemaleTanner) == 0), 
+              alpha = 0.5, colour = "black")+
+      scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none") +
+      scale_color_manual(values = c("black", "red"), 
+                         labels = c("EBS Summer Survey Boundary", "Red King Crab Savings Area"),
+                         name = "") +
+      scale_size_continuous(range = c(2, 10))+ 
+      scale_fill_gradientn(colors = c("gray", rev(pal[5:length(pal)]))) +
+      scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
+      scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
+      labs(title = "2023 BBRKC Collaborative Pot Sampling", subtitle = "Tanner crab")+
+      guides(size = guide_legend(title.position = "top",title = "COUNT", nrow = 2, override.aes = list(shape = c(4, rep(21, 3)))),
+             fill = guide_legend(title = "COUNT"),
+             color = guide_legend(nrow = 2))+
+      coord_sf(xlim = plot.boundary$x,
+               ylim = plot.boundary$y) +
+      geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                           x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                     sf::st_transform(crs = map.crs),
+                   mapping = aes(label = lab))+
+      theme_bw() +
+      theme(axis.title = element_blank(),
+            axis.text = element_text(size = 10),
+            legend.text = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(face = "bold", size = 15),
+            plot.subtitle = element_text(size = 12)) -> tanner_map
+    
+    # Plot Snow
+    ggplot() +
+      geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+      geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+      geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+      geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+      geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+      geom_sf(data = bycatch,
+              mapping = aes(size= (MaleSnow + FemaleSnow), fill = (MaleSnow+FemaleSnow), 
+                            shape = (MaleSnow+FemaleSnow) == 0), 
+              alpha = 0.5, colour = "black")+
+      scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none") +
+      scale_color_manual(values = c("black", "red"), 
+                         labels = c("EBS Summer Survey Boundary", "Red King Crab Savings Area"),
+                         name = "") +
+      scale_size_continuous(range = c(2, 10))+ 
+      scale_fill_gradientn(colors = c("gray", rev(pal[5:length(pal)]))) +
+      scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
+      scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
+      labs(title = "2023 BBRKC Collaborative Pot Sampling", subtitle = "Snow crab")+
+      guides(size = guide_legend(title.position = "top",title = "COUNT", nrow = 2, override.aes = list(shape = c(4, rep(21, 6)))),
+             fill = guide_legend(title = "COUNT"),
+             color = guide_legend(nrow = 2))+
+      coord_sf(xlim = plot.boundary$x,
+               ylim = plot.boundary$y) +
+      geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                           x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                     sf::st_transform(crs = map.crs),
+                   mapping = aes(label = lab))+
+      theme_bw() +
+      theme(axis.title = element_blank(),
+            axis.text = element_text(size = 10),
+            legend.text = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(face = "bold", size = 15),
+            plot.subtitle = element_text(size = 12)) -> snow_map
+    
     # Save figures
     ggsave(plot = yfs_map, "./Figures/yfs_map.png", height=7, width=10, units="in")
     ggsave(plot = pcod_map, "./Figures/pcod_map.png", height=7, width=10, units="in")
+    ggsave(plot = tanner_map, "./Figures/tanner_map.png", height=7, width=10, units="in")
+    ggsave(plot = snow_map, "./Figures/snow_map.png", height=7, width=10, units="in")
     
 # CRAB COUNTS BY ZONE --------------------------------------------------------------------
   # Pull out column letters and column numbers into separate columns  
@@ -836,7 +918,7 @@
     
 
 # CPT PLOTS -------------------------------------------------------------------------
-  #1A: Empty map with bathy, CPS1 outline, and RKCSA -------
+  # Empty map with bathy, CPS1 outline, and RKCSA -------
     ggplot() +
       geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
       geom_sf(data = st_as_sf(CPS1_bound), fill = NA, aes(color = "black"), linewidth = 1)+
@@ -873,7 +955,7 @@
     
     ggsave(plot = cpt_1A, "./Figures/emptymap.png", height=7, width=10, units="in")
     
-  #1B: Temp map with bathy, CPS1 outline, and RKCSA -------
+  # Temp map with bathy, CPS1 outline, and RKCSA -------
     map_layers <- readRDS("./Data/akgfmaps_layers.rds")
     map.crs <- "EPSG:3338"
     
@@ -998,7 +1080,7 @@
     ggsave(plot = temp_map_continuous, "./Figures/tempcont.png", height=7, width=10, units="in")
     
   
-  #1C: All crab count and temp map --------------------------------------------------
+  # All crab count and temp map --------------------------------------------------
     pot_cpue %>%
       group_by(SPN, LAT_DD, LON_DD) %>%
       reframe(COUNT = sum(COUNT)) %>%
@@ -1052,7 +1134,7 @@
     
     ggsave(plot = all_crab.temp_map, "./Figures/all_crab.temp_map.png", height=7, width=10, units="in")
   
-  #1D: Crab count by mat/sex and temp map -----------------------------------------------------------
+  # Crab count by mat/sex and temp map -----------------------------------------------------------
     mat_sex_combos %>%
       purrr::map(~ggplot() +
                    geom_tile(data = temp_df, aes(x = x, y = y, fill = temperature))+
@@ -1107,7 +1189,7 @@
     ggsave(plot = BBRKC.temp.maps[[5]], "./Figures/BBRKC.temp_legalmale.png", height=7, width=10, units="in")
     ggsave(plot = BBRKC.temp.maps[[6]], "./Figures/BBRKC.temp_sublegalmale.png", height=7, width=10, units="in")
     
-  #1E: Bycatch and temp map ---------------------------------------------------------
+  # Bycatch and temp map ---------------------------------------------------------
     #Plot YFS
     ggplot() +
       geom_tile(data = temp_df, aes(x = x, y = y, fill = temperature))+
@@ -1195,10 +1277,102 @@
             plot.title = element_text(face = "bold", size = 15),
             plot.subtitle = element_text(size = 12)) -> pcod.temp_map
     
+    # Plot Tanner crab
+    ggplot() +
+      geom_tile(data = temp_df, aes(x = x, y = y, fill = temperature))+
+      scale_fill_viridis(name = "TEMPERATURE (°C)", option = "plasma", 
+                         guide = guide_colorbar(title.position = "top"))+
+      ggnewscale::new_scale_fill()+
+      geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+      geom_sf(data = st_as_sf(CPS1_bound), fill = NA, aes(color = "black"), linewidth = 1)+
+      #geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+      geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+      geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+      geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+      geom_sf(data = bycatch,
+              mapping = aes(size= (MaleTanner + FemaleTanner), fill = (MaleTanner+FemaleTanner), 
+                            shape = (MaleTanner+FemaleTanner) == 0), 
+              alpha = 0.5, colour = "black")+
+      scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none") +
+      scale_color_manual(values = c("black", "red"), 
+                         labels = c("CPS1 survey boundary", "Red King Crab Savings Area"),
+                         name = "") +
+      scale_size_continuous(range = c(2, 10))+ 
+      scale_fill_gradientn(colors = c("gray", rev(pal[5:length(pal)]))) +
+      scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
+      scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
+      labs(title = "2023 BBRKC Collaborative Pot Sampling", subtitle = "Tanner crab")+
+      guides(size = guide_legend(title.position = "top",title = "COUNT", order = 1, nrow = 2, override.aes = list(shape = c(4, rep(21, 3)))),
+             fill = guide_legend(title = "COUNT", order = 1),
+             color = guide_legend(nrow = 2))+
+      coord_sf(xlim = plot.boundary$x,
+               ylim = plot.boundary$y) +
+      geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                           x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                     sf::st_transform(crs = map.crs),
+                   mapping = aes(label = lab))+
+      theme_bw() +
+      theme(axis.title = element_blank(),
+            axis.text = element_text(size = 10),
+            legend.text = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(face = "bold", size = 15),
+            plot.subtitle = element_text(size = 12)) -> tanner.temp_map
+    
+    ggplot() +
+      geom_tile(data = temp_df, aes(x = x, y = y, fill = temperature))+
+      scale_fill_viridis(name = "TEMPERATURE (°C)", option = "plasma", 
+                         guide = guide_colorbar(title.position = "top"))+
+      ggnewscale::new_scale_fill()+
+      geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+      geom_sf(data = st_as_sf(CPS1_bound), fill = NA, aes(color = "black"), linewidth = 1)+
+      #geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+      geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+      geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+      geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+      geom_sf(data = bycatch,
+              mapping = aes(size= (MaleSnow + FemaleSnow), fill = (MaleSnow+FemaleSnow), 
+                            shape = (MaleSnow+FemaleSnow) == 0), 
+              alpha = 0.5, colour = "black")+
+      scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none") +
+      scale_color_manual(values = c("black", "red"), 
+                         labels = c("CPS1 survey boundary", "Red King Crab Savings Area"),
+                         name = "") +
+      scale_size_continuous(range = c(2, 10))+ 
+      scale_fill_gradientn(colors = c("gray", rev(pal[5:length(pal)]))) +
+      scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
+      scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
+      labs(title = "2023 BBRKC Collaborative Pot Sampling", subtitle = "Snow crab")+
+      guides(size = guide_legend(title.position = "top",title = "COUNT", order = 1, nrow = 2, override.aes = list(shape = c(4, rep(21, 6)))),
+             fill = guide_legend(title = "COUNT", order = 1),
+             color = guide_legend(nrow = 2))+
+      coord_sf(xlim = plot.boundary$x,
+               ylim = plot.boundary$y) +
+      geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                           x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                     sf::st_transform(crs = map.crs),
+                   mapping = aes(label = lab))+
+      theme_bw() +
+      theme(axis.title = element_blank(),
+            axis.text = element_text(size = 10),
+            legend.text = element_text(size = 10),
+            legend.title = element_text(size = 10),
+            legend.position = "bottom",
+            legend.direction = "horizontal",
+            plot.title = element_text(face = "bold", size = 15),
+            plot.subtitle = element_text(size = 12)) -> snow.temp_map
+    
     # Save figures
     ggsave(plot = yfs.temp_map, "./Figures/yfs.temp_map.png", height=7, width=10, units="in")
     ggsave(plot = pcod.temp_map, "./Figures/pcod.temp_map.png", height=7, width=10, units="in")
-  #1F: High resolution bathymetry and temp map ---------------------------
+    ggsave(plot = tanner.temp_map, "./Figures/tanner.temp_map.png", height=7, width=10, units="in")
+    ggsave(plot = snow.temp_map, "./Figures/snow.temp_map.png", height=7, width=10, units="in")
+    
+  # High resolution bathymetry and temp map ---------------------------
     ggplot() +
       geom_tile(data = temp_df, aes(x = x, y = y, fill = temperature))+
       scale_fill_viridis(name = "TEMPERATURE (°C)", option = "plasma", 
@@ -1246,7 +1420,7 @@
      
     ggsave(plot = temp.highresbathy_map, "./Figures/temp.highresbathy_map.png", height=7, width=10, units="in")
     
-  # 1G: High resolution bathymetry, temp, and all crab ------------------------------------------------
+  # High resolution bathymetry, temp, and all crab ------------------------------------------------
     ggplot() +
       geom_tile(data = temp_df, aes(x = x, y = y, fill = temperature))+
       scale_fill_viridis(name = "TEMPERATURE (°C)", option = "plasma", 
@@ -1295,4 +1469,50 @@
             plot.subtitle = element_text(size = 12)) -> all_crab.temp.highresbathy_map
     
     ggsave(plot = all_crab.temp.highresbathy_map, "./Figures/all_crab.temp.highresbathy_map.png", height=7, width=10, units="in")
+    
+  # Analysis with lat, lon, temp, and depth as explanatory variables by size/sex class with spatial error
+    #Join environmental data with pot catch data, transform
+    temp %>%
+      rename(POT_ID = Pot_ID, VESSEL = Vessel) %>%
+      dplyr::right_join(., pot_cpue, by = c("POT_ID", "VESSEL"), relationship = "many-to-many") %>%
+      filter(is.na(AveTemp) == FALSE) %>%
+      sf::st_as_sf(coords = c(x = "LON_DD", y = "LAT_DD"), crs = sf::st_crs(4326)) %>%
+      sf::st_transform(crs = map.crs) -> env.catch_data
+    
+    # Make function to streamline analysis 
+    analyze <- function(mat_sex){
+      # Process data
+      env.catch_data[env.catch_data$MAT_SEX == mat_sex,] %>%
+        cbind(st_coordinates(.)) -> dat
+      
+      dat[duplicated(dat$geometry) == "FALSE",] -> dat
+      
+      # Calculate nearest neighbor weights
+      spdep::knearneigh(dat$geometry) %>%
+        spdep::knn2nb(.) %>%
+        spdep::nb2listw(zero.policy = TRUE) -> spat_wt
+      
+      # Run standard linear model, save output
+      fit_lm <- lm(log(COUNT+1) ~ X + Y + AveDepth + AveTemp, data = dat)
+      
+      # Test for spatial correlation in lm residuals
+      spdep::moran.test(fit_lm$residuals, spat_wt) -> moran_lm #spatial autocorrelation of residuals
+      
+      # Fit spatial error regression model that accounts for spatial autocorrelation of residuals
+      fit_spatlm <- spatialreg::errorsarlm(log(COUNT+1) ~ X + Y + AveDepth + AveTemp, data = dat, listw = spat_wt)
+      
+      # Now test for spatial correlation in spatial error model residuals
+      spdep::moran.test(fit_spatlm$residuals, spat_wt) -> moran_spatlm
+      
+      
+      return(list(fit_lm = summary(fit_lm), moran_lm = moran_lm, 
+                  fit_spatlm = summary(fit_spatlm), moran_spatlm = moran_spatlm))
+    }
+    
+    # Analyze by mat/sex category, store output
+    analyze("Legal male") -> out_lm
+    analyze("Mature male") -> out_mm
+    analyze("Immature male") -> out_im
+    analyze("Mature female") -> out_mf  
+    analyze("Immature female") -> out_imf  
     
