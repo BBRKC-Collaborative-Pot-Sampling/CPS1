@@ -1469,7 +1469,7 @@
     
     ggsave(plot = all_crab.temp.highresbathy_map, "./Figures/all_crab.temp.highresbathy_map.png", height=7, width=10, units="in")
     
-  # Regression analyses -----------------------------------------------------------------
+  # Regression analyses for crab ----------------------------------------------------
     #Join environmental data with pot catch data, transform
     temp %>%
       rename(POT_ID = Pot_ID, VESSEL = Vessel) %>%
@@ -1515,3 +1515,112 @@
     analyze("Mature female") -> out_mf  
     analyze("Immature female") -> out_imf  
     
+  # Regression analyses for cod ----------------------------------------------------
+    #Join environmental data with pot catch data, transform
+     rbind(read.csv("./Data/SS_BYCATCH.csv") %>%
+                       select(!c(RKC.Male.in.NonSurveyPots, RKC.Female.in.NonSurvey.Pots,
+                                 Pollock, Starry.Flounder)), 
+                     read.csv("./Data/SB_BYCATCH .csv")) %>%
+      mutate(SPN = as.numeric(as.character(SPN)), VESSEL = ifelse(VESSEL == 162, "Summer Bay", "Silver Spray")) %>%
+      filter(is.na(SPN) == FALSE, !(VESSEL == "Summer Bay" & SPN %in% 300:311)) %>%
+      right_join(potlifts %>% select(c(VESSEL, SPN, LON_DD, LAT_DD, POT_ID)), .) %>%
+      replace(., is.na(.), 0) %>%
+      right_join((temp %>% rename(POT_ID = Pot_ID, VESSEL = Vessel)), .,  by = c("POT_ID", "VESSEL")) %>%
+      filter(is.na(Latitude_grid) == "FALSE") %>%
+      sf::st_as_sf(coords = c(x = "LON_DD", y = "LAT_DD"), crs = sf::st_crs(4326)) %>%
+      sf::st_transform(crs = map.crs) -> env.bycatch
+    
+    
+     # Process data
+      env.bycatch %>%
+        cbind(st_coordinates(.)) -> dat
+      
+      dat[duplicated(dat$geometry) == "FALSE",] -> dat
+      
+      # Calculate nearest neighbor weights
+      spdep::knearneigh(dat$geometry) %>%
+        spdep::knn2nb(.) %>%
+        spdep::nb2listw(zero.policy = TRUE) -> spat_wt
+      
+      # Run standard linear model, save output
+      fit_lm <- lm(log(PacificCod+1) ~ X + Y + AveDepth + AveTemp, data = dat)
+      
+      # Test for spatial correlation in lm residuals
+      spdep::moran.test(fit_lm$residuals, spat_wt) -> moran_lm #spatial autocorrelation of residuals
+      
+      # Fit spatial error regression model that accounts for spatial autocorrelation of residuals
+      fit_spatlm <- spatialreg::errorsarlm(log(PacificCod+1) ~ X + Y + AveDepth + AveTemp, 
+                                           data = dat, listw = spat_wt)
+      
+      # Now test for spatial correlation in spatial error model residuals
+      spdep::moran.test(fit_spatlm$residuals, spat_wt) -> moran_spatlm
+      
+      
+      
+    
+  # Regression analyses for crab vs. cod --------------------------------------------
+      #Join environmental data with pot catch and bycatch data, transform
+      temp %>%
+        rename(POT_ID = Pot_ID, VESSEL = Vessel) %>%
+        dplyr::right_join(., pot_cpue, by = c("POT_ID", "VESSEL"), relationship = "many-to-many") %>%
+        filter(is.na(AveTemp) == FALSE) -> env.catch_data
+      
+      rbind(read.csv("./Data/SS_BYCATCH.csv") %>%
+              select(!c(RKC.Male.in.NonSurveyPots, RKC.Female.in.NonSurvey.Pots,
+                        Pollock, Starry.Flounder)), 
+            read.csv("./Data/SB_BYCATCH .csv")) %>%
+        mutate(SPN = as.numeric(as.character(SPN)), VESSEL = ifelse(VESSEL == 162, "Summer Bay", "Silver Spray")) %>%
+        filter(is.na(SPN) == FALSE, !(VESSEL == "Summer Bay" & SPN %in% 300:311)) %>%
+        right_join(potlifts %>% select(c(VESSEL, SPN, LON_DD, LAT_DD, POT_ID)), .) %>%
+        replace(., is.na(.), 0) %>%
+        right_join((temp %>% rename(POT_ID = Pot_ID, VESSEL = Vessel)), .,  by = c("POT_ID", "VESSEL")) %>%
+        filter(is.na(Latitude_grid) == "FALSE") -> env.bycatch
+      
+      
+      right_join(env.bycatch, env.catch_data, by = c("POT_ID", "VESSEL"), relationship = "many-to-many") %>%
+        rename(LON_DD = LON_DD.y, LAT_DD = LAT_DD.y, SPN = SPN.x, AveDepth = AveDepth.x, AveSal = AveSal.x, 
+               AveTemp = AveTemp.x) %>%
+        select(c("POT_ID", "VESSEL", "SPN", "LON_DD", "LAT_DD", "AveDepth", "AveTemp", "AveSal", "PacificCod",
+                 "MAT_SEX", "COUNT")) %>%
+        sf::st_as_sf(coords = c(x = "LON_DD", y = "LAT_DD"), crs = sf::st_crs(4326)) %>%
+        sf::st_transform(crs = map.crs) %>%
+        cbind(st_coordinates(.)) -> env.catch.bycatch
+      
+      # Make function to streamline analysis 
+      analyze <- function(mat_sex){
+        # Process data
+        env.catch.bycatch[env.catch.bycatch$MAT_SEX == mat_sex,] -> dat
+        
+        dat[duplicated(dat$geometry) == "FALSE",] -> dat
+        
+        # Calculate nearest neighbor weights
+        spdep::knearneigh(dat$geometry) %>%
+          spdep::knn2nb(.) %>%
+          spdep::nb2listw(zero.policy = TRUE) -> spat_wt
+        
+        # Run standard linear model, save output
+        fit_lm <- lm(log(COUNT+1) ~ log(PacificCod+1), data = dat)
+        
+        # Test for spatial correlation in lm residuals
+        spdep::moran.test(fit_lm$residuals, spat_wt) -> moran_lm #spatial autocorrelation of residuals
+        
+        # Fit spatial error regression model that accounts for spatial autocorrelation of residuals
+        fit_spatlm <- spatialreg::errorsarlm(log(COUNT+1) ~ log(PacificCod+1), data = dat, listw = spat_wt)
+        
+        # Now test for spatial correlation in spatial error model residuals
+        spdep::moran.test(fit_spatlm$residuals, spat_wt) -> moran_spatlm
+        
+        
+        return(list(fit_lm = summary(fit_lm), moran_lm = moran_lm, 
+                    fit_spatlm = summary(fit_spatlm), moran_spatlm = moran_spatlm))
+      }
+      
+      # Analyze by mat/sex category, store output
+      analyze("Legal male") -> out_lm
+      analyze("Mature male") -> out_mm
+      analyze("Immature male") -> out_im
+      analyze("Mature female") -> out_mf  
+      analyze("Immature female") -> out_imf  
+      
+      
+  
