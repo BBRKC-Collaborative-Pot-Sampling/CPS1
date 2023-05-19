@@ -1624,3 +1624,151 @@
       
       
   
+# SHELL CONDITION MAPS --------------------------------------------------------------
+  # Make non-overlapping maturity/sex and legal/sublegal categories, bind together
+    mat_spec %>%
+      dplyr::mutate(SHELL_COND = dplyr::case_when((SPECIES_CODE == 69322 & SHELL_CONDITION %in% 0:1) ~ "Soft Molting",
+                                                  (SPECIES_CODE == 69322 & SHELL_CONDITION == 2) ~ "New Hard",
+                                                  (SPECIES_CODE == 69322 & SHELL_CONDITION == 3) ~ "Old",
+                                                  (SPECIES_CODE == 69322 & SHELL_CONDITION %in% 4:5) ~ "Very Old")) -> shell.cond
+  
+  # Calculate COUNT and CATCH_PER_HOUR per pot, CHANGE VESSEL TO ACTUAL NAME
+      shell.cond %>%
+        dplyr::mutate(CATCH_PER_HOUR = SAMPLING_FACTOR/SOAK_TIME) %>% 
+        dplyr::group_by(VESSEL, SPN, POT_ID, BUOY, LAT_DD, LON_DD, MAT_SEX, SHELL_COND) %>%
+        dplyr::reframe(COUNT = sum(SAMPLING_FACTOR),
+                       CATCH_PER_HOUR = sum(CATCH_PER_HOUR)) -> positive_pot_cpue
+      
+      
+      # Expand potlifts file to all mat-sex categories and potlifts, join to positive catch file to get zeros 
+      mat_sex_combos <- c("Mature male", "Immature male", "Mature female", "Immature female", "Legal male", "Sublegal male")
+      shell_combos <- c("Soft Molting", "New Hard", "Old", "Very Old")
+      
+      positive_pot_cpue %>%
+        dplyr::right_join(expand_grid(MAT_SEX = mat_sex_combos,
+                                      SHELL_COND = shell_combos,
+                                      potlifts)) %>%
+        replace_na(list(COUNT = 0, CPUE = 0)) %>%
+        mutate(SEX = ifelse(MAT_SEX == grep("female", MAT_SEX), "Female", "Male")) %>%
+        dplyr::select(VESSEL, SPN, POT_ID, BUOY, LAT_DD, LON_DD, DATE_SET, TIME_SET, DATE_HAUL, TIME_HAUL, SOAK_TIME,
+                      MAT_SEX, SHELL_COND, SEX, COUNT, CATCH_PER_HOUR) %>%
+        group_by(SPN, POT_ID, LAT_DD, LON_DD, SEX, SHELL_COND) %>%
+        reframe(COUNT = sum(COUNT)) -> pot_cpue_shell.cond
+      
+      # Transform to map
+      pot_cpue_shell.cond %>%
+        sf::st_as_sf(coords = c(x = "LON_DD", y = "LAT_DD"), crs = sf::st_crs(4326)) %>%
+        sf::st_transform(crs = map.crs)-> pot_cpue_sc_mapdat 
+      
+      # Map males
+      pot_cpue_sc_mapdat %>% filter(SEX == "Male") -> male_sc
+      
+      shell_combos %>%
+        purrr::map(~ggplot() +
+                     geom_tile(data = temp_df, aes(x = x, y = y, fill = temperature))+
+                     scale_fill_viridis(name = "TEMPERATURE (°C)", option = "plasma", 
+                                        guide = guide_colorbar(title.position = "top"))+
+                     ggnewscale::new_scale_fill()+
+                     geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+                     geom_sf(data = st_as_sf(CPS1_bound), fill = NA, aes(color = "black"), linewidth = 1)+
+                     #geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+                     geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+                     geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+                     geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+                     geom_sf(data = filter(pot_cpue_sc_mapdat, SHELL_COND == .x),
+                             mapping = aes(size=COUNT, fill = COUNT, shape = COUNT == 0), alpha = 0.5, colour = "black")+
+                     scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none")+
+                     scale_color_manual(values = c("black", "red"), 
+                                        labels = c("CPS1 survey boundary", "Red King Crab Savings Area"),
+                                        name = "") +
+                     scale_size_continuous(range = c(2, 10), limits = c(0, max(pot_cpue_sc_mapdat$COUNT)), 
+                                           breaks =seq(0, max(pot_cpue_sc_mapdat$COUNT), by = 50))+ 
+                     scale_fill_gradientn(breaks = seq(0, max(pot_cpue_sc_mapdat$COUNT), by = 50),
+                                          limits = c(0, max(pot_cpue_sc_mapdat$COUNT)), 
+                                          colors = c("gray", rev(pal[5:length(pal)])))+
+                     scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
+                     scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
+                     labs(title = "2023 BBRKC Collaborative Pot Sampling", subtitle = paste("Male -", .x))+
+                     guides(size = guide_legend(title.position = "top", nrow = 2, order = 1, override.aes = list(shape = c(4, rep(21, 5)))),
+                            fill = guide_legend(order = 1),
+                            color = guide_legend(nrow = 2))+
+                     coord_sf(xlim = plot.boundary$x,
+                              ylim = plot.boundary$y) +
+                     geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                                          x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                               coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                                    sf::st_transform(crs = map.crs),
+                                  mapping = aes(label = lab))+
+                     theme_bw() +
+                     theme(axis.title = element_blank(),
+                           axis.text = element_text(size = 10),
+                           legend.text = element_text(size = 10),
+                           legend.title = element_text(size = 10),
+                           legend.position = "bottom",
+                           legend.direction = "horizontal",
+                           plot.title = element_text(face = "bold", size = 15),
+                           plot.subtitle = element_text(size = 12))) -> BBRKC.malesc.maps
+      
+      # Save plots
+      ggsave(plot = BBRKC.malesc.maps[[1]], "./Figures/BBRKC.male.molt.png", height=7, width=10, units="in")
+      ggsave(plot = BBRKC.malesc.maps[[2]], "./Figures/BBRKC.male.newhard.png", height=7, width=10, units="in")
+      ggsave(plot = BBRKC.malesc.maps[[3]], "./Figures/BBRKC.male.old.png", height=7, width=10, units="in")
+      ggsave(plot = BBRKC.malesc.maps[[4]], "./Figures/BBRKC.male.veryold.png", height=7, width=10, units="in")
+      
+      
+      # Map females
+      pot_cpue_sc_mapdat %>% filter(SEX == "Female") -> female_sc
+      
+      shell_combos %>%
+        purrr::map(~ggplot() +
+                     geom_tile(data = temp_df, aes(x = x, y = y, fill = temperature))+
+                     scale_fill_viridis(name = "TEMPERATURE (°C)", option = "plasma", 
+                                        guide = guide_colorbar(title.position = "top"))+
+                     ggnewscale::new_scale_fill()+
+                     geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+                     geom_sf(data = st_as_sf(CPS1_bound), fill = NA, aes(color = "black"), linewidth = 1)+
+                     #geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+                     geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+                     geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+                     geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+                     geom_sf(data = filter(pot_cpue_sc_mapdat, SHELL_COND == .x),
+                             mapping = aes(size=COUNT, fill = COUNT, shape = COUNT == 0), alpha = 0.5, colour = "black")+
+                     scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none")+
+                     scale_color_manual(values = c("black", "red"), 
+                                        labels = c("CPS1 survey boundary", "Red King Crab Savings Area"),
+                                        name = "") +
+                     scale_size_continuous(range = c(2, 10), limits = c(0, max(pot_cpue_sc_mapdat$COUNT)), 
+                                           breaks =seq(0, max(pot_cpue_sc_mapdat$COUNT), by = 50))+ 
+                     scale_fill_gradientn(breaks = seq(0, max(pot_cpue_sc_mapdat$COUNT), by = 50),
+                                          limits = c(0, max(pot_cpue_sc_mapdat$COUNT)), 
+                                          colors = c("gray", rev(pal[5:length(pal)])))+
+                     scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
+                     scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
+                     labs(title = "2023 BBRKC Collaborative Pot Sampling", subtitle = paste("Female -", .x))+
+                     guides(size = guide_legend(title.position = "top", nrow = 2, order = 1, override.aes = list(shape = c(4, rep(21, 5)))),
+                            fill = guide_legend(order = 1),
+                            color = guide_legend(nrow = 2))+
+                     coord_sf(xlim = plot.boundary$x,
+                              ylim = plot.boundary$y) +
+                     geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                                          x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                               coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                                    sf::st_transform(crs = map.crs),
+                                  mapping = aes(label = lab))+
+                     theme_bw() +
+                     theme(axis.title = element_blank(),
+                           axis.text = element_text(size = 10),
+                           legend.text = element_text(size = 10),
+                           legend.title = element_text(size = 10),
+                           legend.position = "bottom",
+                           legend.direction = "horizontal",
+                           plot.title = element_text(face = "bold", size = 15),
+                           plot.subtitle = element_text(size = 12))) -> BBRKC.femalesc.maps
+      
+      # Save plots
+      ggsave(plot = BBRKC.femalesc.maps[[1]], "./Figures/BBRKC.female.molt.png", height=7, width=10, units="in")
+      ggsave(plot = BBRKC.femalesc.maps[[2]], "./Figures/BBRKC.female.newhard.png", height=7, width=10, units="in")
+      ggsave(plot = BBRKC.femalesc.maps[[3]], "./Figures/BBRKC.female.old.png", height=7, width=10, units="in")
+      ggsave(plot = BBRKC.femalesc.maps[[4]], "./Figures/BBRKC.female.veryold.png", height=7, width=10, units="in")
+      
+      
