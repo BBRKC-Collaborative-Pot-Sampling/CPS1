@@ -1649,7 +1649,7 @@
                                       SHELL_COND = shell_combos,
                                       potlifts)) %>%
         replace_na(list(COUNT = 0, CPUE = 0)) %>%
-        mutate(SEX = ifelse(MAT_SEX == grep("female", MAT_SEX), "Female", "Male")) %>%
+        mutate(SEX = ifelse(MAT_SEX %in% c("Mature female", "Immature female"), "Female", "Male")) %>%
         dplyr::select(VESSEL, SPN, POT_ID, BUOY, LAT_DD, LON_DD, DATE_SET, TIME_SET, DATE_HAUL, TIME_HAUL, SOAK_TIME,
                       MAT_SEX, SHELL_COND, SEX, COUNT, CATCH_PER_HOUR) %>%
         group_by(SPN, POT_ID, LAT_DD, LON_DD, SEX, SHELL_COND) %>%
@@ -1675,16 +1675,16 @@
                      geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
                      geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
                      geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
-                     geom_sf(data = filter(pot_cpue_sc_mapdat, SHELL_COND == .x),
+                     geom_sf(data = filter(male_sc, SHELL_COND == .x),
                              mapping = aes(size=COUNT, fill = COUNT, shape = COUNT == 0), alpha = 0.5, colour = "black")+
                      scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none")+
                      scale_color_manual(values = c("black", "red"), 
                                         labels = c("CPS1 survey boundary", "Red King Crab Savings Area"),
                                         name = "") +
-                     scale_size_continuous(range = c(2, 10), limits = c(0, max(pot_cpue_sc_mapdat$COUNT)), 
-                                           breaks =seq(0, max(pot_cpue_sc_mapdat$COUNT), by = 50))+ 
-                     scale_fill_gradientn(breaks = seq(0, max(pot_cpue_sc_mapdat$COUNT), by = 50),
-                                          limits = c(0, max(pot_cpue_sc_mapdat$COUNT)), 
+                     scale_size_continuous(range = c(2, 10), limits = c(0, max(male_sc$COUNT)), 
+                                           breaks =seq(0, max(male_sc$COUNT), by = 50))+ 
+                     scale_fill_gradientn(breaks = seq(0, max(male_sc$COUNT), by = 50),
+                                          limits = c(0, max(male_sc$COUNT)), 
                                           colors = c("gray", rev(pal[5:length(pal)])))+
                      scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
                      scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
@@ -1717,7 +1717,7 @@
       
       
       # Map females
-      pot_cpue_sc_mapdat %>% filter(SEX == "Female") -> female_sc
+      pot_cpue_sc_mapdat[pot_cpue_sc_mapdat$SEX == "Female",] -> female_sc
       
       shell_combos %>%
         purrr::map(~ggplot() +
@@ -1731,21 +1731,21 @@
                      geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
                      geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
                      geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
-                     geom_sf(data = filter(pot_cpue_sc_mapdat, SHELL_COND == .x),
+                     geom_sf(data = filter(female_sc, SHELL_COND == .x),
                              mapping = aes(size=COUNT, fill = COUNT, shape = COUNT == 0), alpha = 0.5, colour = "black")+
                      scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none")+
                      scale_color_manual(values = c("black", "red"), 
                                         labels = c("CPS1 survey boundary", "Red King Crab Savings Area"),
                                         name = "") +
-                     scale_size_continuous(range = c(2, 10), limits = c(0, max(pot_cpue_sc_mapdat$COUNT)), 
-                                           breaks =seq(0, max(pot_cpue_sc_mapdat$COUNT), by = 50))+ 
-                     scale_fill_gradientn(breaks = seq(0, max(pot_cpue_sc_mapdat$COUNT), by = 50),
-                                          limits = c(0, max(pot_cpue_sc_mapdat$COUNT)), 
+                     scale_size_continuous(range = c(2, 10), limits = c(0, max(female_sc$COUNT)), 
+                                           breaks =seq(0, max(female_sc$COUNT), by = 10))+ 
+                     scale_fill_gradientn(breaks = seq(0, max(female_sc$COUNT), by = 10),
+                                          limits = c(0, max(female_sc$COUNT)), 
                                           colors = c("gray", rev(pal[5:length(pal)])))+
                      scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
                      scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
                      labs(title = "2023 BBRKC Collaborative Pot Sampling", subtitle = paste("Female -", .x))+
-                     guides(size = guide_legend(title.position = "top", nrow = 2, order = 1, override.aes = list(shape = c(4, rep(21, 5)))),
+                     guides(size = guide_legend(title.position = "top", nrow = 2, order = 1, override.aes = list(shape = c(4, rep(21, 4)))),
                             fill = guide_legend(order = 1),
                             color = guide_legend(nrow = 2))+
                      coord_sf(xlim = plot.boundary$x,
