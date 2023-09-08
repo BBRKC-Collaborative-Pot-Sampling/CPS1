@@ -618,38 +618,14 @@
           sf::st_as_sf(coords = c(x = "LON_DD", y = "LAT_DD"), crs = sf::st_crs(4326)) %>%
           sf::st_transform(crs = map.crs)-> potlifts_mapdat 
         
-        #set up plotting features
-        map_layers <- map_layers <- readRDS("./Data/akgfmaps_layers.rds")
-        
-        plot.boundary.untrans <- data.frame(y = c(54, 59.5), 
-                                            x = c(-168, -158)) 
-        
-        plot.boundary <-  plot.boundary.untrans %>%
-                                  sf::st_as_sf(coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
-                                  sf::st_transform(crs = map.crs) %>%
-                                  sf::st_coordinates() %>%
-                                  as.data.frame() %>%
-                                  dplyr::rename(x = X, y = Y) # plot boundary projected
-        
-        breaks.x <- map_layers$lon.breaks[(map_layers$lon.breaks >= plot.boundary.untrans$x[1] &  # set lon breaks
-                                             map_layers$lon.breaks < plot.boundary.untrans$x[2]) == TRUE]
-        
-        breaks.y <- map_layers$lat.breaks[(map_layers$lat.breaks > plot.boundary.untrans$y[1] & # set lat breaks
-                                             map_layers$lat.breaks < plot.boundary.untrans$y[2]) == TRUE]
-        
         # Map coordinates
         ggplot() +
           geom_sf(data = st_as_sf(BB_strata), fill = NA, color = "black", linewidth = 1) +
           geom_sf(data = st_as_sf(RKCSA_sub), fill = NA, color = "red", alpha= 0.5, linewidth = 1) +
           geom_sf(data = st_as_sf(RKCSA), fill = NA, color = "red", alpha =0.5, linewidth = 1) +
-          geom_sf(data = map_layers$akland, fill = "grey80") +
           geom_sf(data = potlifts_mapdat, shape = 19, size = 1.5, colour = "black", stat="identity", 
                   position="identity")+
-          scale_x_continuous(breaks = breaks.x, labels = paste0(breaks.x, "°W")) + 
-          scale_y_continuous(breaks = breaks.y, labels = paste0(breaks.y, "°N")) +
           ggtitle("Coordinate check")+
-          coord_sf(xlim = plot.boundary$x,
-                   ylim = plot.boundary$y) +
           theme_bw() -> coords
         
         print(coords)
