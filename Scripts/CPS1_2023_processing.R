@@ -165,8 +165,9 @@
   # (the other research vessel), and various other references)
       specimen_table %>%
         dplyr::mutate(CLUTCH_SIZE = ifelse((VESSEL == "Summer Bay" & SEX == 2 & EGG_CONDITION == 0 
-                                     & EGG_COLOR == 0), 0, CLUTCH_SIZE)) -> specimen_table
-      
+                                     & EGG_COLOR == 0), 0, CLUTCH_SIZE),
+                      LENGTH = ifelse((VESSEL == "Silver Spray" & SPN == 149 & LENGTH > 200), 158.93, LENGTH)) -> specimen_table
+     
   # Process specimen table for Oracle, save
       specimen_table %>%
         dplyr::select(!c(LAT_DD, LON_DD, DATE_HAUL, TIME_HAUL, SOAK_TIME, DEPTH_F, NOTES.x)) %>%
