@@ -733,7 +733,7 @@ library("ggpattern")
  }
  
  2022:2023 %>%
-   map(~temp_map_ebs_nbs(haul_ebs, .x)) -> nmfs_temp_out
+   map(~temp_map_ebs_nbs(all_hauls, .x)) -> nmfs_temp_out
  
  ggsave(plot = nmfs_temp_out[[1]], "./Figures/CPS1 Report/NMFStemp_22.png", height=7, width=10, units="in")
  ggsave(plot = nmfs_temp_out[[2]], "./Figures/CPS1 Report/NMFStemp_23.png", height=7, width=10, units="in")
@@ -1167,7 +1167,7 @@ library("ggpattern")
    
    
    # Number of size breaks
-   if(!mat_sex %in% c("Mature female", "All crab")){
+   if(!mat_sex %in% c("Mature Female", "All crab")){
      num = 500
    } else{
      num = 1500
@@ -1250,7 +1250,7 @@ library("ggpattern")
                          x = c(-160), y = c(55.2)),
               coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
    sf::st_transform(crs = map.crs) %>%
-   cbind(years, st_coordinates(.)) -> CPS1year_lab
+   cbind(2023, st_coordinates(.)) -> CPS1year_lab
  
  # Temp breaks
  temp_breaks <- c(-Inf, seq(-1,8,1), Inf)
@@ -1298,19 +1298,20 @@ library("ggpattern")
                               labels = c(expression(""<=-1), "-0.9-0", "0.1-1", "1.1-2", "2.1-3", "3.1-4",
                                          "4.1-5", "5.1-6", "6.1-7", "7.1-8", ">8.1"), drop = FALSE) +
    guides(color = guide_legend(nrow = 2), size = guide_legend(title.position = "top",ncol = 1, order = 1, 
-          override.aes = list(shape = c(4, rep(21, 6)))), fill = guide_legend(nrow=2)) +
+          override.aes = list(shape = c(4, rep(21, 6)))), fill = "none") +
    geom_shadowtext(CPS1year_lab,
                    mapping = aes(label = lab, x = X, y = Y), size = 8,  color = "black", bg.color = "white")+
    theme_bw() +
    theme(axis.title = element_blank(),
          axis.text = element_text(size = 15),
-         legend.key.width = unit(12, "mm"),
-         legend.position = "bottom",
+         legend.text = element_text(size = 15),
+         legend.title = element_text(size = 15),
+         legend.position = "right",
          legend.direction = "horizontal",
-         plot.title = element_text(face = "bold", size = 15),
+         plot.title = element_text(face = "bold", size = 20),
          plot.subtitle = element_text(size = 12)) -> CPS1_tempcpue_Allcrab
  
- ggsave(plot = CPS1_tempcpue_Allcrab, "./Figures/CPS1 Report/ CPS1_temp_Allcrab.png", height=7, width=10, units="in")
+ ggsave(plot = CPS1_tempcpue_Allcrab, "./Figures/CPS1 Report/CPS1_tempcpuediscrete_Allcrab.png", height=7, width=10, units="in")
  
  # BY SEX-MATURITY CATEGORY
  mat_sex_combos %>%
@@ -1342,13 +1343,14 @@ library("ggpattern")
          geom_shadowtext(CPS1year_lab,
                          mapping = aes(label = lab, x = X, y = Y), size = 8,  color = "black", bg.color = "white")+
          theme_bw() +
-         theme(axis.title = element_blank(),
-               axis.text = element_text(size = 15),
-               legend.key.width = unit(12, "mm"),
-               legend.position = "right",
-               legend.direction = "vertical",
-               plot.title = element_text(face = "bold", size = 15),
-               plot.subtitle = element_text(size = 12))) -> CPS1_tempcount
+           theme(axis.title = element_blank(),
+                 axis.text = element_text(size = 15),
+                 legend.text = element_text(size = 15),
+                 legend.title = element_text(size = 15),
+                 legend.position = "right",
+                 legend.direction = "horizontal",
+                 plot.title = element_text(face = "bold", size = 20),
+                 plot.subtitle = element_text(size = 12))) -> CPS1_tempcount
  
  ggsave(plot = CPS1_tempcount[[1]], "./Figures/CPS1 Report/ CPS1_tempcpuediscrete_matmale.png", height=7, width=10, units="in")
  ggsave(plot = CPS1_tempcount[[2]], "./Figures/CPS1 Report/ CPS1_tempcpuediscrete_immmale.png", height=7, width=10, units="in")
@@ -1546,7 +1548,7 @@ library("ggpattern")
        ggplot(aes(x=SIZE_BIN, y=ABUNDANCE_MIL, fill=SHELL_TEXT)) +
        geom_bar(position="stack", stat="identity") +
        theme_bw() +
-       scale_x_continuous(expand = c(0.01,0.01), limits = c(30, 175))+ # same as CPS1/NMFS
+       scale_x_continuous(expand = c(0.01,0.01), limits = c(80, 175))+ # same as CPS1/NMFS
        labs(fill = "Shell Condition", title=paste("Mature", plot_lookup$title[plot_lookup$stock == stock])) +
        theme(plot.title=element_text(hjust=0.5)) +
        ylab("Abundance (millions)") +
@@ -1571,7 +1573,7 @@ library("ggpattern")
        ggplot(aes(x=SIZE_BIN, y=ABUNDANCE_MIL, fill=EGG_CONDITION_TEXT)) +
        geom_bar(position="stack", stat="identity") +
        theme_bw() +
-       scale_x_continuous(expand = c(0.01,0.01), limits = c(30, 175))+ # same as CPS1/NMFS
+       scale_x_continuous(expand = c(0.01,0.01), limits = c(80, 175))+ # same as CPS1/NMFS
        labs(fill = "Egg Condition",title=paste("Mature", plot_lookup$title[plot_lookup$stock == stock])) +
        theme(plot.title=element_text(hjust=0.5)) +
        ylab("Abundance (millions)") +
@@ -1591,7 +1593,7 @@ library("ggpattern")
        mutate(CLUTCH_TEXT= factor(CLUTCH_TEXT, levels = c('Full', 'Three Quarter Full', 'Half Full', 
                                                           'Quarter Full', 'Trace', 'Mature Barren', "Unknown"))) %>%
        ggplot(aes(x=SIZE_BIN, y=ABUNDANCE_MIL, fill=CLUTCH_TEXT)) +
-       scale_x_continuous(expand = c(0.01,0.01), limits = c(30, 175))+ # same as CPS1/NMFS
+       scale_x_continuous(expand = c(0.01,0.01), limits = c(80, 175))+ # same as CPS1/NMFS
        geom_bar(position="stack", stat="identity") +
        theme_bw() +
        labs(fill = "Clutch Size",title=paste("Mature", plot_lookup$title[plot_lookup$stock == stock])) +
@@ -1618,7 +1620,7 @@ library("ggpattern")
   
   fem_shell_clutch_tabplot(female_abundance, 2022:2023, "BBRKC") -> NMFS_fem_out
   
-  # Calculate CPS1 female clutch, shell, egg condition by 1mm bin -----
+  # Calculate CPS1 female clutch, shell, egg condition by 1mm bin 
     #Create female shell condition, clutch & egg levels 
     specimen_table %>%
       mutate(YEAR = 2023) %>%
@@ -1642,7 +1644,7 @@ library("ggpattern")
                                      CLUTCH_SIZE == 5 ~ "Three Quarter Full",
                                      CLUTCH_SIZE == 6 ~ "Full",
                                      ((CLUTCH_SIZE == 999) | is.na(CLUTCH_SIZE) == TRUE) ~ "Unknown")) -> female_CPS1_spec
-    #Compute 6-year mean cpue by 1mm size bin for shell/clutch categories  
+    #Compute cpue by 1mm size bin for shell/clutch categories  
     female_CPS1_spec %>%
       #create 1mm size bin
       mutate(SIZE_BIN = floor(LENGTH),
@@ -1698,7 +1700,7 @@ library("ggpattern")
       geom_bar(position="stack", stat="identity") +
       theme_bw() +
       #xlim(0,plot_lookup$XMax[plot_lookup$stock == stock])+
-      scale_x_continuous(expand = c(0.01,0.01), limits = c(30, 175))+ # same as CPS1/NMFS
+      scale_x_continuous(expand = c(0.01,0.01), limits = c(80, 175))+ # same as CPS1/NMFS
       ylab("Abundance") +
       xlab("Carapace length (mm) ") +
       scale_fill_manual(name = "Shell Condition", values = c("#018571", "#80cdc1", "#dfc27d", "#a6611a"),
@@ -1706,8 +1708,6 @@ library("ggpattern")
       facet_manual(~YEAR, "A", scales = "free_y", labeller = labeller(YEAR = labs)) +
       theme(legend.position = "bottom", 
             legend.background=element_rect(fill="white", color="black"))-> CPS1_shell_plot
-    
-    
     
     # Egg condition
     CPS1_fem_1mm %>%
@@ -1719,7 +1719,7 @@ library("ggpattern")
       geom_bar(position="stack", stat="identity") +
       theme_bw() +
       #xlim(0,plot_lookup$XMax[plot_lookup$stock == stock])+
-      scale_x_continuous(expand = c(0.01,0.01), limits = c(30, 175))+ # same as CPS1/NMFS
+      scale_x_continuous(expand = c(0.01,0.01), limits = c(80, 175))+ # same as CPS1/NMFS
       ylab("Abundance") +
       xlab("Carapace length (mm) ") +
       scale_fill_manual(name = "Egg Condition", values=c("#01665e","#5ab4ac","#c7eae5","#f6e8c3","#d8b365","#8c510a", 
@@ -1739,7 +1739,7 @@ library("ggpattern")
       geom_bar(position="stack", stat="identity") +
       theme_bw() +
       #xlim(0,plot_lookup$XMax[plot_lookup$stock == stock])+
-      scale_x_continuous(expand = c(0.01,0.01), limits = c(30, 175))+ # same as CPS1/NMFS
+      scale_x_continuous(expand = c(0.01,0.01), limits = c(80, 175))+ # same as CPS1/NMFS
       ylab("Abundance") +
       xlab("Carapace length (mm) ") +
       scale_fill_manual(name = "Clutch Size", values=c("#01665e", "#5ab4ac", "#c7eae5", "#f6e8c3", "#d8b365", 
@@ -1752,43 +1752,638 @@ library("ggpattern")
   
   
  
-  # Combine NMFS/CPS1 plots, save -----
-  # Maturity
-    ggarrange(ggarrange(NMFS_fem_out$maturity_plot+ rremove("xlab"),
-                        legend = "none"),
-              CPS1_maturity_plot, heights = c(1,1), nrow= 2) 
-    
-    ggsave("./Figures/CPS1 Report/CPS1_maturity_panels.png",
-           height=8.5, width=8.5, units="in")
-    
-  # Shell condition
-    ggarrange(ggarrange(NMFS_fem_out$shell_plot+ rremove("xlab"),
-                        legend = "none"),
-              CPS1_shell_plot, heights = c(1,1), nrow= 2) 
-    
-    ggsave("./Figures/CPS1 Report/CPS1_shell_panels.png",
-           height=8.5, width=8.5, units="in")
-    
-  # Egg condition
-    ggarrange(ggarrange(NMFS_fem_out$egg_plot+ rremove("xlab"),
-                        legend = "none"),
-              CPS1_egg_plot, heights = c(1,1), nrow= 2) 
-    
-    ggsave("./Figures/CPS1 Report/CPS1_egg_panels.png",
-           height=8.5, width=8.5, units="in")
-    
-  # Clutch code
-    ggarrange(ggarrange(NMFS_fem_out$clutch_plot+ rremove("xlab"),
-                        legend = "none"),
-              CPS1_clutch_plot, heights = c(1,1), nrow= 2) 
-    
-    ggsave("./Figures/CPS1 Report/CPS1_clutch_panels.png",
-           height=8.5, width=8.5, units="in")
-    
-    
+  # Combine NMFS/CPS1 plots, save 
+    # Maturity
+      ggarrange(ggarrange(NMFS_fem_out$maturity_plot+ rremove("xlab"),
+                          legend = "none"),
+                CPS1_maturity_plot, heights = c(1,1), nrow= 2) 
+      
+      ggsave("./Figures/CPS1 Report/CPS1_maturity_panels.png",
+             height=8.5, width=8.5, units="in")
+      
+    # Shell condition
+      ggarrange(ggarrange(NMFS_fem_out$shell_plot+ rremove("xlab"),
+                          legend = "none"),
+                CPS1_shell_plot, heights = c(1,1), nrow= 2) 
+      
+      ggsave("./Figures/CPS1 Report/CPS1_shell_panels.png",
+             height=8.5, width=8.5, units="in")
+      
+    # Egg condition
+      ggarrange(ggarrange(NMFS_fem_out$egg_plot+ rremove("xlab"),
+                          legend = "none"),
+                CPS1_egg_plot, heights = c(1,1), nrow= 2) 
+      
+      ggsave("./Figures/CPS1 Report/CPS1_egg_panels.png",
+             height=8.5, width=8.5, units="in")
+      
+    # Clutch code
+      ggarrange(ggarrange(NMFS_fem_out$clutch_plot+ rremove("xlab"),
+                          legend = "none"),
+                CPS1_clutch_plot, heights = c(1,1), nrow= 2) 
+      
+      ggsave("./Figures/CPS1 Report/CPS1_clutch_panels.png",
+             height=8.5, width=8.5, units="in")
     
     
     
+    
+    
+# REQUEST 8B: NMFS and CPS1 MALE SHELL CONDITION BY 1MM BINS ------------------------------------------------------------------
+      
+  # Load function to generate NMFS male data
+    male_shell_data <- function(data_crab, data_strata, stock, years){
+        
+        #District area lookup table by stock, pull districts by stock specified
+        data.frame(STOCK = c("BBRKC", 
+                             rep("PribRKC", 2),
+                             "NSRKC",
+                             rep("PribBKC", 2), 
+                             rep("StMattBKC", 2),
+                             "BKCNBS",
+                             rep("TannerW", 3), 
+                             "TannerE", 
+                             rep("Snow", 3), 
+                             "SnowNBS",
+                             rep("Hybrid", 3), 
+                             rep("Hair", 4), 
+                             rep("Allstations", 10),
+                             rep("NorthRKC",1)),
+                   DISTRICT = c("Bristol Bay", 
+                                "Pribilof MTCA", "Pribilof Single",
+                                "Norton Sound",
+                                "Pribilof MTCA", "Pribilof Single",
+                                "St. Matthew MTCA", "St. Matthew Single",
+                                "NBS All",
+                                "Pribilof MTCA", "St. Matthew MTCA", "West 166",
+                                "East 166",
+                                "Pribilof MTCA", "Single", "St. Matthew MTCA",
+                                "NBS All",
+                                "Pribilof MTCA", "Single", "St. Matthew MTCA",
+                                "Bristol Bay", "Northern Unstratified", "Pribilof MTCA", "Pribilof Single",
+                                "Bristol Bay", "Northern Unstratified", "Pribilof MTCA","Pribilof Single",      
+                                "BKC Unstratified", "St. Matthew MTCA", "St. Matthew Single", "East 166",             
+                                "West 166", "Single",("Northern Unstratified"))) %>%
+          dplyr::filter(STOCK == stock) %>%
+          pull(DISTRICT) -> dist
+        
+        #Pull stock stations from strata tables using stock districts
+        data_strata %>%
+          dplyr::filter(DISTRICT %in% dist) %>%
+          pull(STATION_ID) %>%
+          unique() -> stock_stations
+        
+        #Specify retow stations for BBRKC, pull by year
+        retow_sta <- read.csv("./Data/retow_sta.csv")
+        
+        retow_sta %>%
+          dplyr::filter(SURVEY_YEAR %in% years) %>%
+          dplyr::select(GIS_STATION) %>%
+          pull() -> retow_stations
+        
+        #Create male shell condition levels 
+        data_crab %>%
+          filter(SEX == 1,
+                 AKFIN_SURVEY_YEAR %in% years) %>%
+          mutate(SHELL_TEXT = case_when(SHELL_CONDITION %in% 0:1 ~ "Soft Molting",
+                                        SHELL_CONDITION == 2 ~ "New Hard",
+                                        SHELL_CONDITION == 3 ~ "Old",
+                                        SHELL_CONDITION %in% 4:5 ~ "Very Old"))-> male_ebs_spec
+        
+        #Compute 6-year mean cpue by 1mm size bin for shell categories  
+        male_ebs_spec %>%
+          filter(GIS_STATION %in% stock_stations) %>%
+          #create 1mm size bin
+          mutate(SIZE_BIN = case_when(SPECIES_CODE %in% c(69322,69323) ~ floor(LENGTH_1MM),  
+                                      SPECIES_CODE %in% c(68560,68580) ~ floor(WIDTH_1MM)),
+                 CPUE = SAMPLING_FACTOR/AREA_SWEPT) %>% 
+          group_by(AKFIN_SURVEY_YEAR, GIS_STATION, HAUL_TYPE, SIZE_BIN, SHELL_TEXT) %>%
+          dplyr::summarise(CPUE = sum(CPUE)) -> male_cpue 
+        
+        #Pull out unique haul types by year in order to include in zero-catch station dataframe below
+        data_crab%>%
+          dplyr::filter(AKFIN_SURVEY_YEAR %in% years) %>%
+          
+          distinct(HAUL_TYPE)  ->HT
+        
+        #Join to zero catch stations
+        male_cpue %>%
+          right_join(expand_grid(SIZE_BIN = 1:max(male_cpue$SIZE_BIN),
+                                 
+                                 HAUL_TYPE = as.numeric(levels(factor(HT$HAUL_TYPE))),
+                                 data_strata %>%
+                                   filter(SURVEY_YEAR %in% years,
+                                          STATION_ID %in% stock_stations) %>% 
+                                   distinct(SURVEY_YEAR, STATION_ID, STRATUM, TOTAL_AREA) %>%
+                                   rename_all(~c("AKFIN_SURVEY_YEAR", "GIS_STATION",
+                                                 "STRATUM", "TOTAL_AREA"))) %>%
+                       expand_grid(male_ebs_spec %>%
+                                     distinct(SHELL_TEXT))) %>%
+          replace_na(list(CPUE = 0)) %>%
+          
+          filter(HAUL_TYPE != 17) %>%
+          
+          group_by(AKFIN_SURVEY_YEAR, GIS_STATION, STRATUM, SIZE_BIN, TOTAL_AREA, SHELL_TEXT) %>%
+          dplyr::summarise(CPUE = sum(CPUE)) %>%
+          #Scale to abundance by strata
+          group_by(AKFIN_SURVEY_YEAR, STRATUM, SIZE_BIN, TOTAL_AREA, SHELL_TEXT) %>%
+          summarise(MEAN_CPUE = mean(CPUE, na.rm = T),
+                    ABUNDANCE = (MEAN_CPUE * mean(TOTAL_AREA))) %>%
+          group_by(AKFIN_SURVEY_YEAR, SIZE_BIN, SHELL_TEXT) %>%
+          #Sum across strata
+          summarise(ABUNDANCE_MIL = sum(ABUNDANCE)/1e6) -> male_abundance
+        
+        return(male_abundance = male_abundance)
+      }
+      
+  # Load function to generate NMFS plots
+   male_shell_tabplot <- function(male_abundance, years, stock) {
+        
+        #Create lookup table for plots
+        plot_lookup <- tibble(stock = c("BBRKC", "PribRKC", "PribBKC", "StMattBKC", "TannerE", "TannerW", "Snow","NSRKC", "BKCNBS", "SnowNBS"),
+                              title = c("Male Bristol Bay Red King Crab", "Male Pribilof Islands Red King Crab", "Male Pribilof Islands Blue King Crab",
+                                        "Male St. Matthew Island Blue King Crab", "Male Tanner Crab East", "Male Tanner Crab West", "Male Snow Crab",
+                                        "Male Norton Sound Red King Crab","Male Northern Bering Sea Blue King Crab","Male Northern Bering Sea Snow Crab"),
+                              xlab = c("Carapace length (mm)","Carapace length (mm)","Carapace length (mm)","Carapace length (mm)",
+                                       "Carapace width (mm)","Carapace width (mm)","Carapace width (mm)","Carapace length (mm)","Carapace length (mm)","Carapace width (mm)"),
+                              XMax = c(220,220,175,175,190,190,140,165,150,115)) 
+        
+        design <- "
+    AB
+   "
+        
+        #Specify plot labels
+        labs <- paste("NMFS", years)
+        
+        names(labs) <- years
+        
+        
+        #Shell condition figure
+        male_abundance %>%
+          filter(AKFIN_SURVEY_YEAR %in% years, ABUNDANCE_MIL>0) %>%
+          mutate(SHELL_TEXT  = factor(SHELL_TEXT , levels = c('Very Old', 'Old', 'New Hard', 'Soft Molting'))) %>%
+          ggplot(aes(x=SIZE_BIN, y=ABUNDANCE_MIL, fill=SHELL_TEXT)) +
+          geom_bar(position="stack", stat="identity") +
+          theme_bw() +
+          labs(fill = "Shell Condition", title=plot_lookup$title[plot_lookup$stock == stock]) +
+          #xlim(0,plot_lookup$XMax[plot_lookup$stock == stock])+
+          scale_x_continuous(expand = c(0.01,0.01), limits = c(16, 192))+ #same as CPS1/NMFS
+          theme(plot.title=element_text(hjust=0.5)) +
+          ylab("Abundance (millions)") +
+          xlab(plot_lookup$xlab[plot_lookup$stock == stock]) +
+          scale_fill_manual(name = "Shell Condition", values = c("#018571", "#80cdc1", "#dfc27d", "#a6611a"),
+                            labels = c("Very Old", "Old", "New Hard", "Soft Molting"), drop = FALSE) +
+          facet_manual(~AKFIN_SURVEY_YEAR, design, scales = "free_y", labeller = labeller(AKFIN_SURVEY_YEAR = labs)) +
+          theme(legend.position = "bottom", legend.background=element_rect(fill="white", color="black"))-> shell_plot_male
+        
+        ggsave(paste0("./Figures/Male_SC_", stock, ".png"), plot=shell_plot_male, height=8.5, width=7.5, units="in")
+        
+        return(list(male_abundance = male_abundance, shell_plot = shell_plot_male))
+      }
+      
+  # Run functions for NMFS female data and plots
+    2022:2023 %>%
+      purrr::map_df(~male_shell_data(catch_rkc, strata_rkc, "BBRKC", .x)) -> male_abundance
+      
+    male_shell_tabplot(male_abundance, 2022:2023, "BBRKC") -> NMFS_male_out
+      
+  # Calculate CPS1 male shell condition by 1mm bin 
+    #Create male shell condition, clutch & egg levels 
+      specimen_table %>%
+        mutate(YEAR = 2023)%>%
+        filter(SEX == 1) %>%
+        mutate(SHELL_TEXT = case_when(SHELL_CONDITION %in% 0:1 ~ "Soft Molting",
+                                      SHELL_CONDITION == 2 ~ "New Hard",
+                                      SHELL_CONDITION == 3 ~ "Old",
+                                      SHELL_CONDITION %in% 4:5 ~ "Very Old"))-> male_CPS1_spec
+      
+    #Compute cpue by 1mm size bin for shell/clutch categories  
+      male_CPS1_spec %>%
+        #create 1mm size bin
+        mutate(SIZE_BIN = floor(LENGTH),
+               CATCH_PER_HOUR = SAMPLING_FACTOR/SOAK_TIME) %>% 
+        dplyr::group_by(YEAR, VESSEL, SPN, POT_ID, BUOY, LAT_DD, LON_DD, SIZE_BIN, 
+                        SHELL_TEXT) %>%
+        dplyr::reframe(COUNT = sum(SAMPLING_FACTOR),
+                       CATCH_PER_HOUR = sum(CATCH_PER_HOUR)) -> positive_male_catch
+      
+      
+    #Join to zero catch stations
+      positive_male_catch %>%
+        dplyr::right_join(expand_grid(SIZE_BIN = 1:max(positive_male_catch$SIZE_BIN),
+                                      potlifts) %>%
+                            expand_grid(male_CPS1_spec %>%
+                                          distinct(SHELL_TEXT))) %>%
+        replace_na(list(COUNT = 0, CATCH_PER_HOUR = 0)) %>%
+        group_by(YEAR, SIZE_BIN, SHELL_TEXT) %>%
+        reframe(COUNT = sum(COUNT)) %>%
+        mutate(YEAR = 2023) -> CPS1_male_1mm
+      
+    #Specify plot labels
+      labs <- paste("CPS1", 2023)
+      
+      names(labs) <- 2023
+      
+      
+    # Plot shell condition
+      CPS1_male_1mm %>%
+        dplyr::filter(COUNT>0) %>% 
+        mutate(SHELL_TEXT  = factor(SHELL_TEXT , levels = c('Very Old', 'Old', 'New Hard', 'Soft Molting'))) %>%
+        ggplot(aes(x=SIZE_BIN, y=COUNT, fill=SHELL_TEXT))+
+        geom_bar(position="stack", stat="identity") +
+        theme_bw() +
+        #xlim(0,plot_lookup$XMax[plot_lookup$stock == stock])+
+        scale_x_continuous(expand = c(0.01,0.01), limits = c(16, 192))+ #same as CPS1/NMFS
+        ylab("Abundance") +
+        xlab("Carapace length (mm) ") +
+        scale_fill_manual(name = "Shell Condition", values = c("#018571", "#80cdc1", "#dfc27d", "#a6611a"),
+                          labels = c("Very Old", "Old", "New Hard", "Soft Molting"), drop = FALSE)+
+        facet_manual(~YEAR, "A", scales = "free_y", labeller = labeller(YEAR = labs)) +
+        theme(legend.position = "bottom", 
+              legend.background=element_rect(fill="white", color="black"))-> CPS1_maleshell_plot
+      
+    # Combine NMFS/CPS1 plots, save 
+      # Shell condition
+      ggarrange(ggarrange(NMFS_male_out$shell_plot+ rremove("xlab"),
+                          legend = "none"),
+                CPS1_maleshell_plot, heights = c(1,1), nrow= 2) 
+      
+      ggsave("./Figures/CPS1 Report/CPS1_maleshell_panels.png",
+             height=8.5, width=8.5, units="in")
+      
+# REQUEST 9: BYCATCH AND TEMPERATURE MAPS -------------------------------------------------------------------------------------
+  # WITHOUT TEMP
+    # Make map labels
+      bc_labs <- data.frame(labs = c("Pacific Cod", "Yellowfin Sole"),
+                            name = c("PacificCod", "YellowfinSole"))
+      
+    #Plot YFS
+      ggplot() +
+        geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+        #geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+        geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+        geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+        geom_sf(data = st_as_sf(CPS1_bound), fill = NA, aes(color = "black"), linewidth = 1)+
+        geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+        geom_sf(data = bycatch,
+                mapping = aes(size=YellowfinSole, fill = YellowfinSole, shape = YellowfinSole == 0), 
+                alpha = 0.5, colour = "black")+
+        scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none") +
+        scale_color_manual(values = c("black", "red"), 
+                           labels = c("CPS1 survey boundary", "Red King Crab Savings Area"),
+                           name = "") +
+        scale_size_continuous(range = c(2, 10))+ 
+        scale_fill_gradientn(colors = c("gray", rev(pal[5:length(pal)]))) +
+        scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
+        scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
+        labs(title = "2023 BBRKC Collaborative Pot Sampling", subtitle = paste(filter(bc_labs, name == "YellowfinSole")$lab))+
+        guides(size = guide_legend(title.position = "top", title = "COUNT", nrow = 2, override.aes = list(shape = c(4, rep(21, 4)))),
+               fill = guide_legend(title = "COUNT"),
+               color = guide_legend(nrow = 2))+
+        coord_sf(xlim = plot.boundary$x,
+                 ylim = plot.boundary$y) +
+        geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                             x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                  coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                       sf::st_transform(crs = map.crs),
+                     mapping = aes(label = lab))+
+        theme_bw() +
+        theme(axis.title = element_blank(),
+              axis.text = element_text(size = 10),
+              legend.text = element_text(size = 10),
+              legend.title = element_text(size = 10),
+              legend.position = "bottom",
+              legend.direction = "horizontal",
+              plot.title = element_text(face = "bold", size = 15),
+              plot.subtitle = element_text(size = 12)) -> yfs_map
+      
+    # Plot Pcod
+      ggplot() +
+        geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+        #geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+        geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+        geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+        geom_sf(data = st_as_sf(CPS1_bound), fill = NA, aes(color = "black"), linewidth = 1)+
+        geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+        geom_sf(data = bycatch,
+                mapping = aes(size=PacificCod, fill = PacificCod, shape = PacificCod == 0), 
+                alpha = 0.5, colour = "black")+
+        scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none") +
+        scale_color_manual(values = c("black", "red"), 
+                           labels = c("CPS1 survey boundary", "Red King Crab Savings Area"),
+                           name = "") +
+        scale_size_continuous(range = c(2, 10))+ 
+        scale_fill_gradientn(colors = c("gray", rev(pal[5:length(pal)]))) +
+        scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
+        scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
+        labs(title = "2023 BBRKC Collaborative Pot Sampling", subtitle = paste(filter(bc_labs, name == "PacificCod")$lab))+
+        guides(size = guide_legend(title.position = "top",title = "COUNT", nrow = 2, override.aes = list(shape = c(4, rep(21, 3)))),
+               fill = guide_legend(title = "COUNT"),
+               color = guide_legend(nrow = 2))+
+        coord_sf(xlim = plot.boundary$x,
+                 ylim = plot.boundary$y) +
+        geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                             x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                  coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                       sf::st_transform(crs = map.crs),
+                     mapping = aes(label = lab))+
+        theme_bw() +
+        theme(axis.title = element_blank(),
+              axis.text = element_text(size = 10),
+              legend.text = element_text(size = 10),
+              legend.title = element_text(size = 10),
+              legend.position = "bottom",
+              legend.direction = "horizontal",
+              plot.title = element_text(face = "bold", size = 15),
+              plot.subtitle = element_text(size = 12)) -> pcod_map
+      
+      # Plot Tanner 
+      ggplot() +
+        geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+        #geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+        geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+        geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+        geom_sf(data = st_as_sf(CPS1_bound), fill = NA, aes(color = "black"), linewidth = 1)+
+        geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+        geom_sf(data = bycatch,
+                mapping = aes(size= (MaleTanner + FemaleTanner), fill = (MaleTanner+FemaleTanner), 
+                              shape = (MaleTanner+FemaleTanner) == 0), 
+                alpha = 0.5, colour = "black")+
+        scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none") +
+        scale_color_manual(values = c("black", "red"), 
+                           labels = c("CPS1 survey boundary", "Red King Crab Savings Area"),
+                           name = "") +
+        scale_size_continuous(range = c(2, 10))+ 
+        scale_fill_gradientn(colors = c("gray", rev(pal[5:length(pal)]))) +
+        scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
+        scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
+        labs(title = "2023 BBRKC Collaborative Pot Sampling", subtitle = "Tanner crab")+
+        guides(size = guide_legend(title.position = "top",title = "COUNT", nrow = 2, override.aes = list(shape = c(4, rep(21, 3)))),
+               fill = guide_legend(title = "COUNT"),
+               color = guide_legend(nrow = 2))+
+        coord_sf(xlim = plot.boundary$x,
+                 ylim = plot.boundary$y) +
+        geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                             x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                  coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                       sf::st_transform(crs = map.crs),
+                     mapping = aes(label = lab))+
+        theme_bw() +
+        theme(axis.title = element_blank(),
+              axis.text = element_text(size = 10),
+              legend.text = element_text(size = 10),
+              legend.title = element_text(size = 10),
+              legend.position = "bottom",
+              legend.direction = "horizontal",
+              plot.title = element_text(face = "bold", size = 15),
+              plot.subtitle = element_text(size = 12)) -> tanner_map
+      
+      # Plot Snow
+      ggplot() +
+        geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+        #geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+        geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+        geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+        geom_sf(data = st_as_sf(CPS1_bound), fill = NA, aes(color = "black"), linewidth = 1)+
+        geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+        geom_sf(data = bycatch,
+                mapping = aes(size= (MaleSnow + FemaleSnow), fill = (MaleSnow+FemaleSnow), 
+                              shape = (MaleSnow+FemaleSnow) == 0), 
+                alpha = 0.5, colour = "black")+
+        scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none") +
+        scale_color_manual(values = c("black", "red"), 
+                           labels = c("CPS1 survey boundary", "Red King Crab Savings Area"),
+                           name = "") +
+        scale_size_continuous(range = c(2, 10))+ 
+        scale_fill_gradientn(colors = c("gray", rev(pal[5:length(pal)]))) +
+        scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
+        scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
+        labs(title = "2023 BBRKC Collaborative Pot Sampling", subtitle = "Snow crab")+
+        guides(size = guide_legend(title.position = "top",title = "COUNT", nrow = 2, override.aes = list(shape = c(4, rep(21, 6)))),
+               fill = guide_legend(title = "COUNT"),
+               color = guide_legend(nrow = 2))+
+        coord_sf(xlim = plot.boundary$x,
+                 ylim = plot.boundary$y) +
+        geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                             x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                  coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                       sf::st_transform(crs = map.crs),
+                     mapping = aes(label = lab))+
+        theme_bw() +
+        theme(axis.title = element_blank(),
+              axis.text = element_text(size = 10),
+              legend.text = element_text(size = 10),
+              legend.title = element_text(size = 10),
+              legend.position = "bottom",
+              legend.direction = "horizontal",
+              plot.title = element_text(face = "bold", size = 15),
+              plot.subtitle = element_text(size = 12)) -> snow_map
+      
+      # Save figures
+      ggsave(plot = yfs_map, "./Figures/CPS1 Report/yfs_map.png", height=7, width=10, units="in")
+      ggsave(plot = pcod_map, "./Figures/CPS1 Report/pcod_map.png", height=7, width=10, units="in")
+      ggsave(plot = tanner_map, "./Figures/CPS1 Report/tanner_map.png", height=7, width=10, units="in")
+      ggsave(plot = snow_map, "./Figures/CPS1 Report/snow_map.png", height=7, width=10, units="in")
+  
+ # WITH TEMPERATURE
+      
+      #Plot YFS
+      ggplot() +
+        ggplot2::geom_tile(data = temp_df, 
+                           aes(x = x, 
+                               y = y,
+                               fill = cut(temperature, 
+                                          breaks = temp_breaks))) +
+        geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+        #geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+        #geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+        #geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+        geom_sf(data = st_as_sf(CPS1_bound), fill = NA, color = "black", linewidth = 1)+
+        geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+        geom_sf(data = bycatch,
+                mapping = aes(size=YellowfinSole, shape = YellowfinSole == 0), 
+                alpha = 0.5, colour = "black", fill = "black")+
+        scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none") +
+        #scale_color_manual(values = c("black", "red"), 
+                           #labels = c("CPS1 survey boundary", "Red King Crab Savings Area"),
+                           #name = "") +
+        scale_size_continuous(range = c(2, 10))+ 
+        scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
+        scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
+        labs(title = "2023 BBRKC Collaborative Pot Sampling", subtitle = paste(filter(bc_labs, name == "YellowfinSole")$lab))+
+        guides(size = guide_legend(title.position = "top", title = "COUNT", nrow = 2, override.aes = list(shape = c(4, rep(21, 4)))),
+               fill = guide_legend(nrow = 3),
+               color = guide_legend(nrow = 2))+
+        coord_sf(xlim = plot.boundary$x,
+                 ylim = plot.boundary$y) +
+        ggplot2::scale_fill_manual(name = "Temperature (°C)", values = viridis_pal(option = viridis_option)(n_temp_breaks),
+                                   labels = c(expression(""<=-1), "-0.9-0", "0.1-1", "1.1-2", "2.1-3", "3.1-4",
+                                              "4.1-5", "5.1-6", "6.1-7", "7.1-8", ">8.1"), drop = FALSE) +
+        geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                             x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                  coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                       sf::st_transform(crs = map.crs),
+                     mapping = aes(label = lab))+
+        theme_bw() +
+        theme(axis.title = element_blank(),
+              axis.text = element_text(size = 10),
+              legend.text = element_text(size = 10),
+              legend.title = element_text(size = 10),
+              legend.position = "bottom",
+              legend.direction = "horizontal",
+              plot.title = element_text(face = "bold", size = 15),
+              plot.subtitle = element_text(size = 12)) -> yfs.temp_map
+      
+      #Plot Pcod
+      ggplot() +
+        ggplot2::geom_tile(data = temp_df, 
+                           aes(x = x, 
+                               y = y,
+                               fill = cut(temperature, 
+                                          breaks = temp_breaks))) +
+        geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+        #geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+        #geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+        #geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+        geom_sf(data = st_as_sf(CPS1_bound), fill = NA, color = "black", linewidth = 1)+
+        geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+        geom_sf(data = bycatch,
+                mapping = aes(size=PacificCod, shape = PacificCod == 0), 
+                alpha = 0.5, colour = "black", fill = "black")+
+        scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none") +
+        #scale_color_manual(values = c("black", "red"), 
+        #labels = c("CPS1 survey boundary", "Red King Crab Savings Area"),
+        #name = "") +
+        scale_size_continuous(range = c(2, 10))+ 
+        scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
+        scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
+        labs(title = "2023 BBRKC Collaborative Pot Sampling", subtitle = paste(filter(bc_labs, name == "PacificCod")$lab))+
+        guides(size = guide_legend(title.position = "top", title = "COUNT", nrow = 2, override.aes = list(shape = c(4, rep(21, 3)))),
+               fill = guide_legend(nrow = 3),
+               color = guide_legend(nrow = 2))+
+        coord_sf(xlim = plot.boundary$x,
+                 ylim = plot.boundary$y) +
+        ggplot2::scale_fill_manual(name = "Temperature (°C)", values = viridis_pal(option = viridis_option)(n_temp_breaks),
+                                   labels = c(expression(""<=-1), "-0.9-0", "0.1-1", "1.1-2", "2.1-3", "3.1-4",
+                                              "4.1-5", "5.1-6", "6.1-7", "7.1-8", ">8.1"), drop = FALSE) +
+        geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                             x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                  coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                       sf::st_transform(crs = map.crs),
+                     mapping = aes(label = lab))+
+        theme_bw() +
+        theme(axis.title = element_blank(),
+              axis.text = element_text(size = 10),
+              legend.text = element_text(size = 10),
+              legend.title = element_text(size = 10),
+              legend.position = "bottom",
+              legend.direction = "horizontal",
+              plot.title = element_text(face = "bold", size = 15),
+              plot.subtitle = element_text(size = 12)) -> pcod.temp_map
+      
+    #Plot snow
+      ggplot() +
+        ggplot2::geom_tile(data = temp_df, 
+                           aes(x = x, 
+                               y = y,
+                               fill = cut(temperature, 
+                                          breaks = temp_breaks))) +
+        geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+        #geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+        #geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+        #geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+        geom_sf(data = st_as_sf(CPS1_bound), fill = NA, color = "black", linewidth = 1)+
+        geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+        geom_sf(data = bycatch,
+                mapping = aes(size= (MaleSnow + FemaleSnow), 
+                              shape = (MaleSnow+FemaleSnow) == 0), 
+                alpha = 0.5, colour = "black", fill = "black")+
+        scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none") +
+        #scale_color_manual(values = c("black", "red"), 
+        #labels = c("CPS1 survey boundary", "Red King Crab Savings Area"),
+        #name = "") +
+        scale_size_continuous(range = c(2, 10))+ 
+        scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
+        scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
+        labs(title = "2023 BBRKC Collaborative Pot Sampling", subtitle = "Snow crab")+
+        guides(size = guide_legend(title.position = "top", title = "COUNT", nrow = 2, override.aes = list(shape = c(4, rep(21, 6)))),
+               fill = guide_legend(nrow = 3),
+               color = guide_legend(nrow = 2))+
+        coord_sf(xlim = plot.boundary$x,
+                 ylim = plot.boundary$y) +
+        ggplot2::scale_fill_manual(name = "Temperature (°C)", values = viridis_pal(option = viridis_option)(n_temp_breaks),
+                                   labels = c(expression(""<=-1), "-0.9-0", "0.1-1", "1.1-2", "2.1-3", "3.1-4",
+                                              "4.1-5", "5.1-6", "6.1-7", "7.1-8", ">8.1"), drop = FALSE) +
+        geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                             x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                  coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                       sf::st_transform(crs = map.crs),
+                     mapping = aes(label = lab))+
+        theme_bw() +
+        theme(axis.title = element_blank(),
+              axis.text = element_text(size = 10),
+              legend.text = element_text(size = 10),
+              legend.title = element_text(size = 10),
+              legend.position = "bottom",
+              legend.direction = "horizontal",
+              plot.title = element_text(face = "bold", size = 15),
+              plot.subtitle = element_text(size = 12)) -> snow.temp_map
+      
+    #Plot Tanner
+      ggplot() +
+        ggplot2::geom_tile(data = temp_df, 
+                           aes(x = x, 
+                               y = y,
+                               fill = cut(temperature, 
+                                          breaks = temp_breaks))) +
+        geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
+        #geom_sf(data = st_as_sf(BB_strata), fill = NA, mapping = aes(color = "black"), linewidth = 1) +
+        #geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(color = "red"), fill = NA, alpha= 0.9, linewidth = 1) +
+        #geom_sf(data = st_as_sf(RKCSA), fill = NA,  color = "red", alpha =0.5, linewidth = 1) +
+        geom_sf(data = st_as_sf(CPS1_bound), fill = NA, color = "black", linewidth = 1)+
+        geom_sf(data = st_transform(map_layers$akland, map.crs), fill = "grey80") +
+        geom_sf(data = bycatch,
+                mapping = aes(size= (MaleTanner + FemaleTanner), 
+                              shape = (MaleTanner+FemaleTanner) == 0), 
+                alpha = 0.5, colour = "black", fill = "black")+
+        scale_shape_manual(values = c('TRUE' = 4, 'FALSE' = 21), guide = "none") +
+        #scale_color_manual(values = c("black", "red"), 
+        #labels = c("CPS1 survey boundary", "Red King Crab Savings Area"),
+        #name = "") +
+        scale_size_continuous(range = c(2, 10))+ 
+        scale_x_continuous(breaks = c(-165, -160), labels = paste0(c(165, 160), "°W"))+
+        scale_y_continuous(breaks = c(56, 58), labels = paste0(c(56, 58), "°N"))+
+        labs(title = "2023 BBRKC Collaborative Pot Sampling", subtitle = "Tanner crab")+
+        guides(size = guide_legend(title.position = "top", title = "COUNT", nrow = 2, override.aes = list(shape = c(4, rep(21, 3)))),
+               fill = guide_legend(nrow = 3),
+               color = guide_legend(nrow = 2))+
+        coord_sf(xlim = plot.boundary$x,
+                 ylim = plot.boundary$y) +
+        ggplot2::scale_fill_manual(name = "Temperature (°C)", values = viridis_pal(option = viridis_option)(n_temp_breaks),
+                                   labels = c(expression(""<=-1), "-0.9-0", "0.1-1", "1.1-2", "2.1-3", "3.1-4",
+                                              "4.1-5", "5.1-6", "6.1-7", "7.1-8", ">8.1"), drop = FALSE) +
+        geom_sf_text(sf::st_as_sf(data.frame(lab= c("50m", "100m"), 
+                                             x = c(-161.5, -165), y = c(58.3, 56.1)),
+                                  coords = c(x = "x", y = "y"), crs = sf::st_crs(4326)) %>%
+                       sf::st_transform(crs = map.crs),
+                     mapping = aes(label = lab))+
+        theme_bw() +
+        theme(axis.title = element_blank(),
+              axis.text = element_text(size = 10),
+              legend.text = element_text(size = 10),
+              legend.title = element_text(size = 10),
+              legend.position = "bottom",
+              legend.direction = "horizontal",
+              plot.title = element_text(face = "bold", size = 15),
+              plot.subtitle = element_text(size = 12)) -> tanner.temp_map
+      
+      
+      # Save figures
+      ggsave(plot = yfs.temp_map, "./Figures/CPS1 Report/yfs.temp_map.png", height=7, width=10, units="in")
+      ggsave(plot = pcod.temp_map, "./Figures/CPS1 Report/pcod.temp_map.png", height=7, width=10, units="in")
+      ggsave(plot = tanner.temp_map, "./Figures/CPS1 Report/tanner.temp_map.png", height=7, width=10, units="in")
+      ggsave(plot = snow.temp_map, "./Figures/CPS1 Report/snow.temp_map.png", height=7, width=10, units="in")
+      
 # REQUEST 10: # CRAB CAUGHT IN CLOSURE AREAS ----------------------------------------------------------------------------------
  # Pull out column letters and column numbers into separate columns  
  pot_cpue %>%
