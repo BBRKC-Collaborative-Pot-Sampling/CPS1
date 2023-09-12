@@ -427,6 +427,7 @@ library("ggpattern")
   
   st_read(survey_gdb,layer="NBBTCA") ->  nbbtca
   st_read(survey_gdb,layer="TogiakTrawlArea") ->  togtrawl
+  st_read("./Data/BBDistrict.gdb", layer = "BB_District") -> bb_dist
   
   # Transform plot boundary
   plot.boundary.untrans <- data.frame(y = c(54, 59.5), 
@@ -449,7 +450,7 @@ library("ggpattern")
    geom_sf(data = st_transform(map_layers$bathymetry, map.crs), color=alpha("grey70")) +
    geom_sf(data = st_as_sf(RKCSA_sub), mapping = aes(fill = "firebrick3"), color = "black", alpha= 0.5, linewidth = 1) +
    geom_sf(data = st_as_sf(RKCSA), aes(fill = "firebrick2"),  color = "black", alpha =0.5, linewidth = 0.5) +
-   geom_sf(data = st_as_sf(BB_strata), fill = NA, aes(color = "black"), linewidth = 1) +
+   geom_sf(data = st_as_sf(bb_dist), fill = NA, aes(colour = "black"), linewidth = 1) +
    #geom_sf(data = st_as_sf(zone1$Shape), fill = "blue", alpha = 0.15, aes(color = "black"), linewidth = 0.5) +
    geom_sf_pattern(data = st_as_sf(zone1$Shape),
                    aes(pattern_type = "stripe", pattern_angle = 30), fill = NA, color = "black", pattern_alpha = 0.15)+
@@ -465,8 +466,8 @@ library("ggpattern")
    scale_color_manual(values = c("black", "darkblue", "olivedrab2"), 
                       labels = c("Bristol Bay management boundary", "Area 516", "CPS1 survey extent"),
                       name = "") +
-   scale_fill_manual(values = c(alpha("firebrick3", 0.5), alpha("firebrick2", 0.25), alpha("gold2", 0.5)),
-                     labels = c("Red King Crab Savings Area", "Red King Crab Savings Subarea", "Togiak Trawl Area"),
+   scale_fill_manual(values = c(alpha("firebrick3", 0.5), alpha("indianred1", 0.25), alpha("gold2", 0.5)),
+                     labels = c("Red King Crab Savings Area", "Red King Crab Savings Subarea", "Nearshore Bristol Bay Trawl Area"),
                      name = "")+
 
    scale_pattern_type_manual(values = c("stripe", "stripe"),
